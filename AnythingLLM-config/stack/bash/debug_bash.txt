@@ -1,0 +1,52 @@
+[DEBUG Y DIAGNÓSTICO EN BASH]
+
+---
+
+[CÓMO DIAGNOSTICAR SCRIPTS ROTOS]
+
+Si el usuario reporta que su script de bash genera resultados erróneos o fallos irreconocibles, ejecutar este protocolo:
+
+1. **Rastreo de Ejecución (`set -x`)**
+   Sugiere al usuario (o edita el código) para incluir el flag `-x` en modo debug.
+   ```bash
+   # Imprimirá cada comando en terminal antes de ejecutarlo.
+   set -x
+   ```
+   *Alternativa de invocación:* Pedir al usuario que corra `bash -x ./su_script.sh`.
+
+2. **Validación con ShellCheck**
+   Asume que todo script pasa idealmente por estándares linter. Si el código mostrado tiene problemas evidentes como `$var` sin proteger o condicionales débiles, menciónalo como un `"Fallo Linter estilo ShellCheck"`.
+
+3. **Verbosidad en Errores**
+   Si se cae silenciosamente y se usa `set -e`, es porque alguna tubería ignoró el código (falta `pipefail`), o porque falta un bloque que controle el error. Proponer:
+   `trap 'echo "El script colapsó en la línea \$LINENO" >&2' ERR`
+
+---
+
+[ERRORES COMUNES A EVALUAR PRIORITARIAMENTE]
+
+❌ **Problema de Carriage Returns (`\r`)**
+- Síntoma: Fallan comandos tontos o dice "comando no encontrado".
+- Causa raíz: Script editado en Windows (CRLF) corriéndose en entorno Unix.
+- Solución: Pasar herramientas como `dos2unix` o añadir un `sed -i 's/\r$//'`.
+
+❌ **Space y Path Splitting**
+- Síntoma: "Demasiados argumentos en línea X".
+- Causa raíz: Iterar nombres manipulando variables sin comillado. La variable valía `"foto playa.png"`, al invocar `rm ${VAR}`, eliminó una foto que no existe y un archivo llamado `playa.png`.
+- Solución: Proteger la variable → `"${VAR}"`.
+
+❌ **Pérdida de Subshell (The While-read problem)**
+- Síntoma: Variables modificadas dentro de un bucle `while` se pierden al salir.
+- Causa raíz: Usar tuberías que obligan a un subshell `cat data.txt | while read line; do ... done`.
+- Mejor solución en Bash nativo: Usar redirección.
+  ```bash
+  while IFS= read -r line; do
+     ...
+  done < data.txt
+  ```
+
+---
+
+[ACCIÓN DEL AGENTE DEBUGGER]
+→ Enseñar explícitamente y **arreglar** el comando erróneo.
+→ Siempre blindar la función devuelta con `set -euo pipefail` a no ser que sea un fragmento puro integrado de en medio de otro flujo.

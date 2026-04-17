@@ -1,0 +1,127 @@
+[DEBUG PYTHON]
+
+---
+
+[CATEGORÍAS DE ERROR]
+
+1. ERRORES DE TIPO
+   - TypeError: argumento de tipo incorrecto o operación inválida entre tipos
+     → verificar type hints y datos de entrada
+     → usar isinstance() si el tipo puede variar
+   - AttributeError: acceso a atributo que no existe
+     → verificar que el objeto es del tipo esperado
+     → objeto puede ser None — agregar None check
+
+2. ERRORES DE NOMBRE Y SCOPE
+   - NameError: variable usada antes de definir
+     → revisar orden de definición y scope
+   - UnboundLocalError: variable usada en función antes de asignar
+     → python detecta asignación en el scope pero se accede antes
+
+3. ERRORES DE ÍNDICE Y CLAVE
+   - IndexError: acceso fuera de rango en lista/tupla
+     → verificar longitud antes: if idx < len(lst)
+   - KeyError: clave no existe en diccionario
+     → usar .get(key, default) o key in dict antes de acceder
+
+4. ERRORES DE IMPORTACIÓN
+   - ModuleNotFoundError: módulo no instalado o path incorrecto
+     → verificar que el entorno virtual está activo
+     → verificar que el paquete está en requirements.txt
+   - ImportError: objeto específico no existe en el módulo
+     → verificar nombre exacto y versión de la librería
+
+5. ERRORES ASYNC
+   - RuntimeWarning: coroutine was never awaited
+     → se llamó a función async sin await
+     → siempre await funciones coroutine
+   - Event loop is closed / no running event loop
+     → mezcla de código sync y async — usar asyncio.run() como punto de entrada
+   - Bloqueo en event loop
+     → función bloqueante (requests, sleep) en función async
+     → usar await asyncio.sleep() y httpx/aiohttp en lugar de requests
+
+6. ERRORES DE BASE DE DATOS
+   - IntegrityError: violación de FK o UNIQUE
+     → verificar datos antes de insertar
+   - OperationalError: conexión perdida o timeout
+     → implementar retry con backoff exponencial
+   - ProgrammingError: SQL malformado
+     → verificar la query, nombres de tabla/columna
+
+7. MEMORY Y RENDIMIENTO
+   - MemoryError: uso excesivo de memoria
+     → cargar datos grandes con generadores, no listas completas
+   - RecursionError: recursión sin caso base o demasiado profunda
+     → agregar caso base, o convertir a iterativo con stack explícito
+
+---
+
+[PROCESO DE DIAGNÓSTICO]
+
+PASO 1: LEER EL TRACEBACK COMPLETO
+- El error real está en la última línea del traceback
+- El origen del problema suele estar en el frame más cercano al código propio
+- Distinguir: ¿es el código propio o una librería?
+
+PASO 2: REPRODUCIR EN AISLAMIENTO
+- Crear script mínimo que reproduzca el error
+- Verificar que ocurre con datos de ejemplo simples
+- ¿Ocurre siempre o con datos específicos?
+
+PASO 3: INSPECCIONAR ESTADO
+- Agregar print() o breakpoint() antes del punto de fallo
+- Verificar tipos: print(type(variable))
+- Verificar valores: print(repr(variable))
+- Usar pdb: import pdb; pdb.set_trace()
+
+PASO 4: CAUSA RAÍZ
+- ¿Es un problema de tipos incompatibles?
+- ¿Es un problema de datos inesperados (None, vacío, formato incorrecto)?
+- ¿Es un problema de orden de operaciones?
+- ¿Es un problema de configuración o entorno?
+
+PASO 5: SOLUCIÓN Y PREVENCIÓN
+- Corregir la causa raíz (no el síntoma)
+- Agregar validación de entrada donde falta
+- Agregar type hints si faltan
+- Agregar test para regresión
+
+---
+
+[HERRAMIENTAS]
+
+- pdb / ipdb: debugger interactivo en terminal
+- breakpoint(): equivalente moderno a pdb.set_trace() (Python 3.7+)
+- cProfile: profiling de rendimiento
+- memory_profiler: análisis de uso de memoria
+- pytest -xvs: ejecutar tests con output detallado y parar en el primer fallo
+- mypy: verificación estática de tipos
+
+---
+
+[ERRORES COMUNES POR LIBRERÍA]
+
+REQUESTS / HTTPX:
+- requests.exceptions.ConnectionError → verificar URL y conectividad
+- requests.exceptions.Timeout → agregar timeout explícito siempre
+- JSONDecodeError al parsear respuesta → verificar status code primero
+
+SQLALCHEMY:
+- DetachedInstanceError → acceso a relación lazy fuera de sesión
+- IntegrityError → constraint violation — manejar explícitamente
+
+DJANGO / FLASK:
+- ImproperlyConfigured → settings no cargado correctamente
+- TemplateDoesNotExist → verificar nombre y ubicación de template
+- CSRF verification failed → token CSRF faltante en form
+
+---
+
+[FORMATO DE RESPUESTA DEBUG]
+
+1. TIPO DE ERROR: [excepción específica de Python]
+2. LÍNEA EN EL TRACEBACK: [ubicación del fallo]
+3. CAUSA RAÍZ: [explicación concisa]
+4. SOLUCIÓN: [código corregido con type hints]
+5. PREVENCIÓN: [validación o patrón para evitarlo]

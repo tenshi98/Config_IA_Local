@@ -1,0 +1,91 @@
+[PROTOCOLO DE MEMORIA — Compatible AnythingLLM]
+
+---
+
+[CONTEXTO]
+
+AnythingLLM no permite que la IA escriba archivos directamente.
+[PROTOCOLO DE MEMORIA Y ACTUALIZACIÓN]
+
+La memoria del sistema se gestiona de forma AUTÓNOMA.
+El sistema tiene acceso a una Agent Skill (Herramienta) nativa llamada "Update Project Memory".
+
+---
+
+[REGLAS DE PERSISTENCIA]
+
+1. CUÁNDO GUARDAR INFORMACIÓN:
+   - Cuando se toma una decisión de arquitectura
+   - Cuando se soluciona un error complejo tras un debug
+   - Cuando el usuario define una regla (ej: "siempre usa X librería")
+   - Cuando se detecta un patrón de comportamiento (Fase 9 del pipeline)
+
+2. CÓMO GUARDAR (Agent Skill):
+   - NUNCA pedir al usuario que copie o pegue archivos manualmente.
+   - Usar SIEMPRE la herramienta/skill "Update Project Memory" (u homóloga con la que estés configurado).
+   - Inyectar la información directamente seleccionando el archivo correspondiente.
+
+---
+
+[FORMATO DE LOS DATOS A ENVIAR A LA HERRAMIENTA]
+
+Cuando uses la herramienta, el campo `content` debe seguir esta estructura estricta:
+
+Para historial_errores.txt:
+[YYYY-MM-DD] ERROR: {resumen_corto} | CAUSA: {causa} | SOLUCIÓN: {solución_aplicada}
+
+Para historial de proyecto (`proyectos/nombreDeEjemplo_decisiones.txt` o `proyectos/nombreDeEjemplo_memoria.txt`):
+[YYYY-MM-DD] {CATEGORÍA}: {decisión_tomada_o_regla_definida}
+
+Para patrones_detectados.txt:
+[YYYY-MM-DD] PATRÓN: {descripción_del_patrón} | ACCIÓN: {cómo_proceder_en_el_futuro}
+
+---
+
+[RESTRICCIONES CRÍTICAS]
+
+- NO usar la herramienta de memoria si la decisión técnica, regla o corrección NO HA SIDO CONFIRMADA por el usuario.
+- Siempre confirmar en el chat al usuario: "He guardado esto en memoria automáticamente (archivo X)."
+- NO sobreescribir configuraciones globales sin confirmación explícita.
+
+---
+
+[COMANDOS DE CONTROL]
+
+El usuario puede decir:
+
+- "olvida esto"     → eliminar última entrada registrada
+- "corrige memoria" → solicitar al sistema el bloque corregido
+- "reset proyecto"  → emitir bloque para limpiar memoria_proyecto
+- "¿qué recuerdas?" → el sistema resume la memoria cargada actualmente
+- "actualiza memoria" → el sistema emite todos los bloques pendientes
+
+---
+
+[FORMATO DE ENTRADAS EN MEMORIA]
+
+Cada entrada en los archivos de memoria debe seguir el formato:
+
+[YYYY-MM-DD] CLAVE: valor
+Ejemplo:
+[2026-04-05] ARQUITECTURA: Se usa Clean Architecture en Flutter con Riverpod
+
+---
+
+[REGLAS]
+
+- No generar bloques MEMORIA_UPDATE por suposiciones
+- Solo por información confirmada explícitamente por el usuario
+- No sobrescribir decisiones previas sin confirmación
+- Si hay conflicto con memoria existente, señalarlo antes de actualizar
+
+---
+
+[PRIORIDAD DE MEMORIA]
+
+1. proyectos/{proyecto}_decisiones.txt
+2. proyectos/{proyecto}_memoria.txt
+3. proyecto_activo.txt
+4. memoria_global.txt
+5. patrones_detectados.txt
+6. historial_errores.txt

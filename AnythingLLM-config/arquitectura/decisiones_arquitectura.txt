@@ -1,0 +1,77 @@
+[DECISIONES DE ARQUITECTURA — Architecture Decision Records]
+
+Este archivo registra decisiones arquitectónicas confirmadas del proyecto.
+Formato ADR (Architecture Decision Record) para trazabilidad.
+
+---
+
+[PRINCIPIOS BASE]
+
+- Uso de arquitectura MVC
+- API REST como estándar
+- Separación estricta de responsabilidades
+- Diseño basado en componentes
+
+---
+
+[CRITERIOS OBLIGATORIOS]
+
+Evaluar siempre:
+
+- escalabilidad
+- rendimiento
+- mantenibilidad
+- seguridad
+
+---
+
+[CONSIDERACIONES]
+
+- tolerancia a fallos
+- crecimiento futuro
+- desacoplamiento entre módulos
+
+---
+
+[REGLAS]
+
+- Evitar sobreingeniería
+- Justificar decisiones técnicas
+- Evaluar trade-offs en cada solución
+
+---
+
+[ALINEACIÓN]
+
+- Compatible con stack:
+  PHP, JS, TypeScript, Python, SQL, Flutter
+
+---
+
+[REGISTRO DE DECISIONES]
+
+Cada decisión debe registrarse usando este formato:
+
+```
+[YYYY-MM-DD] DECISIÓN: {qué se decidió}
+CONTEXTO: {problema o necesidad que motivó la decisión}
+ALTERNATIVAS EVALUADAS: {opciones consideradas y por qué se descartaron}
+RAZÓN: {justificación técnica de la opción elegida}
+REVISABLE SI: {condiciones que invalidarían esta decisión}
+```
+
+Ejemplo:
+```
+[2026-04-06] DECISIÓN: Usar Clean Architecture en Flutter con Riverpod
+CONTEXTO: La app móvil necesita una estructura testeable y escalable
+ALTERNATIVAS EVALUADAS: MVC (muy simple para la complejidad), BLoC (más verbose que Riverpod)
+RAZÓN: Clean Architecture separa capas, Riverpod es más conciso que BLoC y tiene mejor DX
+REVISABLE SI: El equipo crece y prefiere BLoC por su adopción más amplia
+```
+
+---
+
+[DECISIONES ACTIVAS]
+
+(Las decisiones se registran aquí conforme se confirman con el usuario)
+(El Agent Skill "Update Project Memory" puede escribir aquí automáticamente)

@@ -1,0 +1,71 @@
+[PERFIL DEL USUARIO]
+
+---
+
+[NIVEL TÉCNICO]
+
+semi-senior
+
+---
+
+[LENGUAJES PRINCIPALES]
+
+- PHP (principal)
+- JavaScript
+- TypeScript
+- Python
+- SQL
+- Flutter
+- HTML/CSS
+
+---
+
+[ESTILO PREFERIDO]
+
+código + breve explicación
+
+---
+
+[ENFOQUE]
+
+- mantenibilidad
+- rendimiento
+- rapidez de entrega
+
+---
+
+[TOLERANCIA A COMPLEJIDAD]
+
+media
+
+---
+
+[CONTEXTO DE USO]
+
+- producción
+- proyectos propios
+
+---
+
+[RESTRICCIONES]
+
+- Linux (entorno de desarrollo)
+- AnythingLLM como interfaz principal
+- Modelos via Ollama (local)
+
+---
+
+[REGLAS DE ADAPTACIÓN]
+
+- Ajustar nivel de detalle según nivel técnico (semi-senior)
+- Dar código funcional completo, no fragmentos
+- Incluir breve explicación de decisiones no obvias
+- No explicar conceptos básicos salvo que los pida
+- Priorizar soluciones aplicables sobre teóricas
+- Si hay múltiples opciones, recomendar la más equilibrada
+
+---
+
+[NOTAS]
+
+Actualizar este archivo cuando el usuario indique un cambio de preferencia.

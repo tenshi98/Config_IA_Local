@@ -1,0 +1,211 @@
+[PYTHON — REGLAS DE DESARROLLO]
+
+Versión: Python 3.10+
+Estilo base: PEP 8 + PEP 20 (El Zen de Python)
+
+---
+
+[CONFIGURACIÓN BASE]
+
+- Python 3.10+ (usar match/case, union types con |, parámetros solo keyword)
+- Type hints obligatorios en funciones y métodos públicos
+- Formateo: Black (o compatible) — líneas máximo 88 caracteres
+- Linting: flake8 / ruff para análisis estático
+- Entornos virtuales: venv o virtualenv — nunca instalar dependencias globales
+- Dependencias declaradas en requirements.txt o pyproject.toml
+
+---
+
+[TYPE HINTS]
+
+- Anotar parámetros y retorno en todas las funciones públicas
+- Usar el módulo typing para tipos complejos: Optional, Union, List, Dict
+- Python 3.10+: usar | en lugar de Union: int | str
+- Python 3.10+: usar X | None en lugar de Optional[X]
+- dataclasses para estructuras de datos simples
+- Para validación de datos: Pydantic (cuando el proyecto lo use)
+
+```python
+# Correcto (Python 3.10+)
+def get_user(user_id: int, active_only: bool = True) -> User | None:
+    ...
+
+# Con tipos complejos
+def process_items(items: list[dict[str, int]]) -> list[str]:
+    ...
+```
+
+---
+
+[CLASES Y OOP]
+
+- dataclasses para DTOs y estructuras simples
+- ABCMeta / ABC para contratos (equivalente a interfaces)
+- Propiedades (@property) en lugar de getters/setters manuales
+- __slots__ para clases con muchas instancias y rendimiento crítico
+- Herencia simple preferida — múltiple herencia solo con Mixins bien definidos
+- Composición sobre herencia cuando sea posible
+
+```python
+from dataclasses import dataclass, field
+from abc import ABC, abstractmethod
+
+@dataclass
+class User:
+    id: int
+    name: str
+    email: str
+    tags: list[str] = field(default_factory=list)
+
+class UserRepository(ABC):
+    @abstractmethod
+    def find_by_id(self, user_id: int) -> User | None: ...
+    
+    @abstractmethod
+    def save(self, user: User) -> None: ...
+```
+
+---
+
+[FUNCIONES Y MÉTODOS]
+
+- Una función = una responsabilidad
+- Máximo 30 líneas por función — extraer si es más
+- Usar list/dict/set comprehensions para transformaciones simples
+- Generadores (yield) para secuencias grandes — no cargar todo en memoria
+- Funciones puras cuando sea posible (sin efectos secundarios)
+- *args y **kwargs solo cuando el caso lo justifica estrictamente
+
+```python
+# Comprehension — correcto
+users_active = [u for u in users if u.is_active]
+
+# Generador para colecciones grandes
+def read_large_file(path: str):
+    with open(path) as f:
+        for line in f:
+            yield line.strip()
+```
+
+---
+
+[MANEJO DE ERRORES]
+
+- Excepciones específicas — nunca capturar Exception base sin re-raise
+- Crear jerarquía de excepciones de dominio
+- Usar finally para limpieza de recursos o contextmanager
+- Preferir context managers (with) para recursos (archivos, conexiones, locks)
+- No usar bare except: — siempre especificar la excepción
+
+```python
+# Correcto
+class UserNotFoundError(ValueError):
+    def __init__(self, user_id: int) -> None:
+        super().__init__(f"User {user_id} not found")
+
+try:
+    user = repository.find_or_raise(user_id)
+except UserNotFoundError:
+    logger.warning(f"User {user_id} not found")
+    raise
+except DatabaseError as e:
+    logger.error(f"DB error fetching user {user_id}: {e}")
+    raise
+
+# Incorrecto
+try:
+    ...
+except:          # bare except — captura todo incluido SystemExit
+    pass         # silenciar sin loggear
+```
+
+---
+
+[ASYNC (asyncio)]
+
+- async/await para código I/O bound (HTTP, DB, archivos)
+- asyncio.gather() para operaciones concurrentes independientes
+- Nunca mezclar código bloqueante en funciones async sin run_in_executor
+- Usar aiohttp/httpx para HTTP async — no requests (bloqueante)
+- Usar bases de datos con drivers async: asyncpg, aiomysql, Motor
+
+```python
+# Concurrente
+async def fetch_all(ids: list[int]) -> list[User]:
+    tasks = [fetch_user(id) for id in ids]
+    return await asyncio.gather(*tasks)
+```
+
+---
+
+[MÓDULOS Y ORGANIZACIÓN]
+
+Estructura recomendada:
+```
+proyecto/
+├── src/
+│   ├── domain/          # entidades y contratos (sin dependencias)
+│   ├── application/     # casos de uso / servicios
+│   ├── infrastructure/  # DB, APIs externas, implementaciones
+│   └── api/             # controladores / endpoints
+├── tests/
+├── requirements.txt
+└── pyproject.toml
+```
+
+- Imports absolutos siempre — no imports relativos en proyectos grandes
+- __init__.py vacío salvo que se necesite re-exportar
+- Un módulo por clase para clases grandes
+
+---
+
+[NOMENCLATURA]
+
+- Clases: PascalCase (UserRepository, OrderService)
+- Funciones y variables: snake_case (get_user_by_id, is_active)
+- Constantes: UPPER_SNAKE_CASE (MAX_RETRIES, DEFAULT_TIMEOUT)
+- Archivos: snake_case (user_repository.py, order_service.py)
+- Privados: prefijo _ (_internal_method, _cache)
+- Muy privados (name mangling): prefijo __ (__secret)
+- Booleanos: prefijo is/has/can (is_active, has_permission)
+
+---
+
+[RENDIMIENTO]
+
+- Perfilar antes de optimizar: cProfile, line_profiler
+- Generadores en lugar de listas para datos grandes
+- lru_cache / cache para resultados costosos repetidos
+- slots en clases con muchas instancias
+- Numpy/Pandas para operaciones numéricas/datos masivos
+- Evitar loops anidados donde hay alternativa vectorizada
+
+---
+
+[TESTING]
+
+- pytest como framework principal
+- Tests unitarios para dominio y aplicación
+- Tests de integración para infraestructura
+- Fixtures de pytest para setup/teardown
+- Mock de dependencias externas: unittest.mock o pytest-mock
+- Cobertura mínima recomendada: 80% en lógica de negocio
+
+---
+
+[FRAMEWORKS SOPORTADOS]
+
+FASTAPI:
+- Utilizar el context manager moderno `lifespan` obligatoriamente en reemplazo de los decoradores depreciados de `@app.on_event`
+- Definición exhaustiva de validación con el uso ubicuo de `pydantic.Field()` y gestión de entornos estricta vía `BaseSettings`
+- Priorizar inyección de dependencias puras mediante `Depends()` 
+
+DJANGO:
+- Emplear Django REST Framework (DRF) como norma obligatoria en implementaciones API (usando `ModelViewSets` y `Serializers` en lugar de codificación directa serializada JSON de Models a HttpResponse)
+- Evitar terminantemente consultas cíclicas destructoras (N+1) mediante `select_related()` para Foreign Keys y `prefetch_related()` para cruces M2M/Reverse ForeignKey
+- Separar lógica en capa de "Servicios" o "Selectors" cuando las Views genéricas concentran lógica transaccional ajena a validación de red
+
+FLASK:
+- Exigir siempre la orquestación bajo el patrón Application Factory (`def create_app(config_name)`) en pro del control integral de testing sobre extensiones
+- Adoptar Blueprinting para división granular de enrutamiento 
+- Reservar explícitamente y preferentemente para microservicios y usar `SQLAlchemy` modernamente con `Alembic` para las migraciones

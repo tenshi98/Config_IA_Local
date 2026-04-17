@@ -1,0 +1,155 @@
+[PATRONES ARQUITECTÓNICOS]
+
+Catálogo de patrones con criterios de uso específicos para el stack del usuario.
+
+---
+
+[MVC — Model View Controller]
+
+CUÁNDO USAR:
+- Aplicaciones web con interfaz de usuario
+- Proyectos donde hay separación clara de datos, lógica y presentación
+- Equipos donde el backend y frontend pueden trabajar independientemente
+
+CUÁNDO NO USAR:
+- Microservicios sin UI
+- APIs puras sin renderizado
+- Aplicaciones muy simples (overhead innecesario)
+
+EN EL STACK:
+- PHP: Controller recibe request → Model consulta DB → View renderiza HTML
+- Flutter: no MVC puro, ver Clean Architecture
+
+RED FLAGS QUE LO SUGIEREN:
+- Lógica de presentación mezclada con acceso a datos
+- Controladores con más de 100 líneas
+
+---
+
+[REPOSITORY PATTERN]
+
+CUÁNDO USAR:
+- Cuando se necesita abstraer el origen de los datos (DB, API, cache)
+- Cuando se quiere poder intercambiar la fuente de datos sin cambiar la lógica
+- Proyectos con pruebas unitarias donde se mockea la fuente de datos
+
+CUÁNDO NO USAR:
+- Aplicaciones simples con un solo origen de datos y sin tests
+- Cuando añade capas sin valor real
+
+EN EL STACK:
+- PHP: UserRepository con métodos findById(), save(), delete()
+- Flutter (Clean Arch): interface en Domain, implementación en Data
+
+RED FLAGS QUE LO SUGIEREN:
+- Queries SQL directas en controllers o servicios
+- Código difícil de testear por dependencia directa de DB
+
+---
+
+[SERVICE LAYER]
+
+CUÁNDO USAR:
+- Lógica de negocio compleja que no pertenece al modelo ni al controlador
+- Operaciones que involucran múltiples modelos
+- Cuando se reusan operaciones desde múltiples controllers
+
+CUÁNDO NO USAR:
+- CRUD simple sin lógica adicional (solo agrega indirección)
+
+EN EL STACK:
+- PHP: UserService con métodos register(), changePassword(), deleteAccount()
+- Llamado desde Controller, llama a Repository
+
+RED FLAGS QUE LO SUGIEREN:
+- Controllers con lógica de negocio compleja
+- Misma lógica repetida en múltiples controllers
+
+---
+
+[CLEAN ARCHITECTURE]
+
+CUÁNDO USAR:
+- Proyectos grandes o que crecerán
+- Cuando se necesita testabilidad alta
+- Flutter (estándar de facto para apps medianas/grandes)
+
+CUÁNDO NO USAR:
+- Proyectos pequeños o MVPs rápidos (overhead de capas)
+- Equipo pequeño sin experiencia en el patrón
+
+CAPAS (de interna a externa):
+1. Entities: modelos de dominio puros
+2. Use Cases: lógica de negocio
+3. Interface Adapters: repositories, presenters
+4. Frameworks: DB, UI, APIs externas
+
+REGLA DE DEPENDENCIA: las capas internas no conocen las externas
+
+RED FLAGS QUE LO SUGIEREN:
+- Lógica de negocio en la UI
+- Cambiar de base de datos requiere tocar toda la app
+
+---
+
+[FACTORY PATTERN]
+
+CUÁNDO USAR:
+- Crear objetos cuyo tipo exacto depende de una condición
+- Centralizar la lógica de creación de objetos complejos
+- Cuando el proceso de creación debe ser intercambiable
+
+CUÁNDO NO USAR:
+- Objetos simples con un solo tipo
+- Cuando new ClassName() es suficiente
+
+EN EL STACK:
+- PHP: NotificationFactory que retorna EmailNotification, SMSNotification, PushNotification
+
+---
+
+[OBSERVER / EVENT]
+
+CUÁNDO USAR:
+- Cuando múltiples componentes deben reaccionar a un evento
+- Desacoplar el emisor del evento de sus consumidores
+- Logs, auditoría, notificaciones tras una acción
+
+CUÁNDO NO USAR:
+- Flujos simples donde el acoplamiento directo es más claro
+- Cuando el flujo de eventos se vuelve difícil de seguir
+
+EN EL STACK:
+- PHP: eventos de dominio (UserRegistered, OrderPlaced)
+- Flutter: Stream / StreamController para eventos de UI
+
+---
+
+[SINGLETON]
+
+CUÁNDO USAR:
+- Conexión a base de datos
+- Configuración global de la aplicación
+- Logger centralizado
+
+CUÁNDO NO USAR:
+- Como sustituto de variables globales
+- Para compartir estado mutable entre componentes (dificulta tests)
+
+RED FLAGS DE MAL USO:
+- Singleton con múltiples responsabilidades
+- Tests que fallan por estado compartido entre pruebas
+
+---
+
+[CRITERIOS DE SELECCIÓN]
+
+| Necesidad | Patrón recomendado |
+|-----------|-------------------|
+| Separar UI de datos | MVC |
+| Abstraer fuente de datos | Repository |
+| Lógica de negocio compleja | Service Layer |
+| App grande y testeable | Clean Architecture |
+| Crear objetos según condición | Factory |
+| Reaccionar a eventos desacoplado | Observer |
+| Un único punto de acceso global | Singleton (con cuidado) |

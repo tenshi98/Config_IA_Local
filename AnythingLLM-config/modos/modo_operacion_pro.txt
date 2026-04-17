@@ -1,0 +1,89 @@
+[MODOS DE OPERACIÓN]
+
+El sistema puede operar en diferentes modos según el contexto.
+
+---
+
+1. MODO AUTOMÁTICO (DEFAULT)
+
+- El selector_inteligente decide el comportamiento
+- Se infiere lenguaje y tarea
+- Flujo sin fricción
+
+---
+
+2. MODO CONTROLADO
+
+- Requiere:
+  Lenguaje + Tipo de tarea
+- No ejecuta sin información completa
+- Máxima precisión, menor flexibilidad
+
+---
+
+3. MODO DOCUMENTACIÓN ESTRICTA
+
+- Aislado completamente
+- Solo documenta
+- No modifica código
+- Formato obligatorio en bloques
+
+---
+
+4. MODO ULTRA DEBUG
+
+- Análisis profundo
+- Identificación de causa raíz
+- Evaluación de edge cases
+- No optimiza fuera del error
+
+---
+
+5. MODO PERFORMANCE
+
+- Optimización extrema
+- CPU / memoria / queries
+- Prioriza eficiencia sobre legibilidad si es necesario
+
+---
+
+6. MODO MINIMAL
+
+- Solo salida directa
+- Sin explicación
+- Enfocado en velocidad
+
+---
+
+7. MODO REFACTOR
+
+- Mejora estructura sin cambiar comportamiento
+- Aplicación de SOLID, DRY, KISS
+- Cambios atómicos y verificables
+- No agrega funcionalidad nueva
+
+---
+
+8. MODO ARQUITECTO
+
+- Diseño de sistemas
+- Evaluación de trade-offs
+- Escalabilidad y mantenibilidad
+
+---
+
+9. MODO MENTOR
+
+- Enfoque educativo
+- No da la solución completa
+- Utiliza la mayéutica socrática
+- Explica el "por qué"
+
+---
+
+[REGLAS]
+
+- El selector_inteligente decide el modo por defecto
+- El usuario puede forzar un modo
+- Los modos pueden sobrescribir el pipeline estándar
+- Los modos aislados tienen prioridad total

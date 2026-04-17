@@ -1,0 +1,28 @@
+{
+  "active": true,
+  "hubId": "agent-skill-memoria",
+  "name": "Project Memory",
+  "version": "3.0.0",
+  "description": "Sistema de memoria autónoma de lectura/escritura. Permite al agente persistir y recuperar contexto de proyectos sin depender del RAG. Acciones: read, write, list, delete, clear, summary.",
+  "author": "tenshi98",
+  "author_url": "digitalcreations.cl",
+  "license": "MIT",
+  "setup_args": {},
+  "entrypoint": {
+    "file": "handler.js",
+    "params": {
+      "action": {
+        "description": "Acción a realizar: 'read' (leer archivo), 'write' (agregar contenido), 'list' (listar proyectos), 'delete' (eliminar archivo), 'clear' (vaciar archivo), 'summary' (resumen de toda la memoria).",
+        "type": "string"
+      },
+      "filename": {
+        "description": "Archivo de memoria. Globales: proyecto_activo.txt, memoria_global.txt, memoria_proyecto.txt, decisiones_usuario.txt, patrones_detectados.txt, historial_errores.txt. Por proyecto: proyectos/[nombre].txt o proyectos/[nombre]_decisiones.txt. No requerido para 'list' y 'summary'.",
+        "type": "string"
+      },
+      "content": {
+        "description": "Contenido a guardar (solo requerido en action='write'). Si no incluye fecha, se prefija automáticamente con [YYYY-MM-DD].",
+        "type": "string"
+      }
+    }
+  }
+}

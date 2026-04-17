@@ -1,0 +1,83 @@
+[MÉTRICAS DE CALIDAD]
+
+Define concretamente qué significa que una respuesta es de calidad.
+Usado en Fase 7 del pipeline (validación final).
+
+---
+
+[MÉTRICAS PRIMARIAS — obligatorias]
+
+1. CORRECTITUD
+   - El código resuelve exactamente el problema planteado
+   - No resuelve un problema diferente o más simple
+   - Los edge cases obvios están cubiertos
+   Medición: ¿ejecutaría sin errores con los inputs del caso de uso?
+
+2. COMPLETITUD
+   - La respuesta no requiere que el usuario complete nada
+   - No hay imports faltantes, funciones no definidas ni dependencias no declaradas
+   - Si son múltiples archivos, todos están presentes
+   Medición: ¿puede el usuario usar la solución directamente?
+
+3. CONSISTENCIA
+   - Compatible con el stack definido en stack_tecnologico
+   - Compatible con la arquitectura de memoria_proyecto
+   - No contradice decisiones_usuario previas
+   Medición: ¿encaja en el sistema actual sin romper nada?
+
+4. SEGURIDAD
+   - Sin vulnerabilidades conocidas del lenguaje
+   - Sin credenciales hardcodeadas
+   - Inputs validados y sanitizados
+   Medición: ¿pasaría una revisión básica de seguridad?
+
+---
+
+[MÉTRICAS SECUNDARIAS — deseables]
+
+5. EFICIENCIA
+   - Sin redundancia de código evitable
+   - Sin complejidad innecesaria (YAGNI)
+   - Sin operaciones costosas donde hay alternativas simples
+   Medición: ¿hay una solución más simple con el mismo resultado?
+
+6. LEGIBILIDAD
+   - Nombres descriptivos en variables, funciones y clases
+   - Sin magic numbers sin nombre
+   - Estructura clara y predecible
+   Medición: ¿puede entenderse sin comentarios explicativos?
+
+7. MANTENIBILIDAD
+   - Sin funciones de más de 50 líneas sin justificación
+   - Sin acoplamiento alto entre módulos no relacionados
+   - Cambios futuros pueden hacerse en un solo lugar
+   Medición: ¿puede modificarse sin afectar partes no relacionadas?
+
+8. ADAPTACIÓN AL USUARIO
+   - Nivel de detalle apropiado al perfil (semi-senior)
+   - Estilo de respuesta según preferencia (código + breve explicación)
+   - Sin sobre-explicar conceptos básicos
+   Medición: ¿es útil para este usuario específico?
+
+---
+
+[UMBRALES DE ENTREGA]
+
+CALIDAD ALTA (entregar sin advertencias):
+- Métricas 1-4 = cumplidas
+- Métricas 5-8 = mayoría cumplidas
+
+CALIDAD MEDIA (entregar con nota):
+- Métricas 1-4 = cumplidas
+- Métricas 5-8 = algunas no cumplidas
+
+CALIDAD BAJA (regenerar):
+- Alguna de las métricas 1-4 = no cumplida
+
+---
+
+[TRADE-OFFS ACEPTABLES]
+
+- Eficiencia vs Legibilidad: preferir legibilidad salvo contexto de performance
+- Completitud vs Brevedad: preferir código completo aunque sea más largo
+- Consistencia vs Solución óptima: si la solución óptima viola la arquitectura → señalarlo y preguntar

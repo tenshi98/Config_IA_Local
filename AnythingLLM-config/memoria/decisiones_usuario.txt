@@ -1,0 +1,29 @@
+[VERSIÓN: 1.0 | Última actualización: 2026-04-06]
+
+[DECISIONES DEL USUARIO]
+
+Registro de decisiones explícitas del usuario.
+
+---
+
+Ejemplos:
+
+- "usar arquitectura MVC"
+- "priorizar rendimiento sobre legibilidad"
+- "no usar frameworks externos"
+
+---
+
+REGLAS:
+
+- Estas decisiones tienen prioridad alta
+- No deben ser cuestionadas sin motivo técnico fuerte
+- Deben aplicarse en todas las respuestas futuras
+
+---
+
+USO:
+
+- Mantener coherencia
+- Evitar repetir decisiones
+- Adaptar soluciones automáticamente

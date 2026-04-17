@@ -1,0 +1,103 @@
+[DEBUG PHP]
+
+---
+
+[CATEGORÍAS DE ERROR]
+
+1. ERRORES DE TIPO
+   - TypeError: argumento de tipo incorrecto
+   - ValueError: valor fuera de rango válido
+   → verificar declare(strict_types=1) y tipos declarados
+
+2. ERRORES DE REFERENCIA
+   - Undefined variable: variable usada antes de inicializar
+   - Undefined array key: acceso a índice inexistente
+   → usar isset() / array_key_exists() antes de acceder
+   → inicializar variables antes de usarlas
+
+3. ERRORES DE NULOS
+   - Null pointer / Call to member function on null
+   → verificar que el objeto se instanció correctamente
+   → agregar null check o usar null safe operator: $obj?->method()
+
+4. ERRORES DE BASE DE DATOS
+   - PDOException al ejecutar query
+   → verificar conexión, credenciales, query malformada
+   → revisar que los tipos de parámetros coincidan con la columna
+   → verificar que la tabla/columna existan
+
+5. ERRORES DE CARGA
+   - Class not found / Cannot declare class
+   → verificar namespace vs ruta del archivo (PSR-4)
+   → verificar que el autoloader esté configurado
+
+6. ERRORES DE RENDIMIENTO
+   - Timeout / memoria agotada
+   → detectar N+1 queries (query counter en desarrollo)
+   → detectar bucles con operaciones costosas dentro
+   → revisar índices en BD para queries lentas
+
+---
+
+[PROCESO DE DIAGNÓSTICO]
+
+PASO 1: LEER EL ERROR COMPLETO
+- Tipo de excepción
+- Mensaje exacto
+- Archivo y línea
+- Stack trace completo
+
+PASO 2: VERIFICAR CONFIGURACIÓN
+- ¿Está declare(strict_types=1)?
+- ¿Los tipos declarados son correctos?
+- ¿El entorno (dev/prod) es el esperado?
+
+PASO 3: AISLAR EL PUNTO DE FALLO
+- ¿En qué capa ocurre? (Controller / Service / Repository / DB)
+- ¿El error es del código propio o de una dependencia?
+- ¿Es reproducible siempre o intermitente?
+
+PASO 4: IDENTIFICAR CAUSA RAÍZ
+- No tratar el síntoma — buscar la causa original
+- Revisar el stack trace desde lo más específico
+- Verificar los datos de entrada al método que falla
+
+PASO 5: SOLUCIÓN Y PREVENCIÓN
+- Corregir la causa raíz
+- Agregar validación para prevenir la misma entrada inválida
+- Agregar tipo estricto si falta
+
+---
+
+[HERRAMIENTAS]
+
+- Xdebug: debugging paso a paso, profiling
+- var_dump() / print_r() temporales en desarrollo
+- error_log() para logging sin mostrar al usuario
+- PHP built-in server para pruebas rápidas: php -S localhost:8000
+
+---
+
+[ERRORES COMUNES EN EL STACK PHP+MySQL]
+
+- SQLSTATE[23000]: Integrity constraint violation
+  → violación de FK o UNIQUE — revisar datos antes de insertar
+
+- SQLSTATE[42S22]: Column not found
+  → nombre de columna incorrecto en la query — verificar esquema
+
+- Maximum execution time exceeded
+  → query sin índice o bucle N+1 — usar EXPLAIN en la query
+
+- Allowed memory exhausted
+  → cargando demasiados registros a memoria — usar paginación o generadores
+
+---
+
+[FORMATO DE RESPUESTA DEBUG]
+
+1. TIPO DE ERROR: [excepción específica]
+2. CAUSA RAÍZ: [descripción concisa]
+3. UBICACIÓN: [capa + archivo/método si se identifica]
+4. SOLUCIÓN: [código corregido con tipo estricto]
+5. PREVENCIÓN: [validación o patrón para evitarlo]

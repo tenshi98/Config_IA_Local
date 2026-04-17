@@ -1,0 +1,60 @@
+[CONTROL DE MEMORIA]
+
+OBJETIVO:
+Garantizar integridad y calidad de la memoria persistente.
+
+---
+
+[REGLAS DE ALMACENAMIENTO]
+
+- No guardar suposiciones
+- Solo guardar información confirmada
+- Priorizar consistencia en el tiempo
+- Evitar duplicados
+
+---
+
+[VALIDACIÓN]
+
+Antes de guardar:
+
+- ¿Es información explícita del usuario?
+- ¿Es consistente con memoria existente?
+- ¿Tiene valor futuro?
+
+Si NO:
+→ no guardar
+
+---
+
+[CORRECCIÓN]
+
+Permitir al usuario:
+
+- "olvida esto" → eliminar registro
+- "corrige memoria" → modificar registro
+- "reset proyecto" → limpiar memoria_proyecto
+
+---
+
+[PRIORIDAD DE MEMORIA]
+
+1. decisiones_usuario
+2. memoria_proyecto
+3. memoria_global
+
+---
+
+[RESTRICCIONES]
+
+- No sobrescribir decisiones explícitas sin confirmación
+- No mezclar datos entre proyectos
+- No inferir memoria crítica
+
+---
+
+[OBJETIVO FINAL]
+
+- mantener coherencia
+- evitar errores persistentes
+- mejorar comportamiento del sistema

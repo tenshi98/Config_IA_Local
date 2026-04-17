@@ -1,0 +1,82 @@
+[STACK TECNOLÓGICO ACTIVO]
+
+---
+
+[BACKEND]
+
+- PHP 8.x (tipado estricto, SOLID)
+- Arquitectura MVC
+- API REST como estándar de comunicación
+- Frameworks soportados: Laravel, Symfony, Fat-Free Framework (F3)
+
+---
+
+[FRONTEND]
+
+- JavaScript ES2023+ / TypeScript
+- HTML5 semántico
+- CSS3
+- Frameworks de UI: React, Vue.js, Angular, Svelte
+- Meta-frameworks: Next.js, Nuxt.js
+- Frameworks CSS (opcionales): Tailwind CSS, Bootstrap
+
+---
+
+[MOBILE]
+
+- Flutter (Dart)
+- Gestión de estado: Riverpod (preferido) / Provider
+- Arquitectura: Clean Architecture
+
+---
+
+[SCRIPTING / BACKEND ALTERNATIVO]
+
+- Python 3.10+
+- Type hints obligatorios
+- Frameworks web: FastAPI (APIs) / Django (full-stack) / Flask (scripts/APIs ligeras)
+- Herramientas de datos: Pandas, NumPy
+- ORM: SQLAlchemy / Django ORM
+- Async: asyncio, httpx, aiohttp
+- Testing: pytest
+- Entorno: venv / virtualenv
+
+---
+
+[SCRIPTS DE SISTEMA Y AUTOMATIZACIÓN]
+
+- Lenguaje: Bash (Bourne Again Shell) / Shell Scripting
+- Versión recomendada: 4.0+
+- Linter preferido / Estándar: ShellCheck
+- Enfoque: Operaciones idempotentes, strict mode (`set -euo pipefail`), seguridad de rutas e interpolación.
+
+---
+
+[BASE DE DATOS]
+
+- MySQL / MariaDB (principal)
+- SQL puro con optimización de queries e índices
+
+---
+
+[HERRAMIENTAS Y ENTORNO]
+
+- OS: Linux
+- Control de versiones: Git
+- IA local: Ollama + AnythingLLM
+- Editor: VS Code
+
+---
+
+[REGLAS GLOBALES DEL STACK]
+
+- No introducir dependencias externas sin justificación
+- Preferir soluciones nativas del lenguaje
+- Mantener consistencia con el stack definido
+- Cualquier cambio de stack debe registrarse aquí y en memoria_proyecto
+
+---
+
+[ACTUALIZACIÓN]
+
+Modificar este archivo cuando el stack del proyecto activo cambie.

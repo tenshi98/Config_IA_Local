@@ -1,0 +1,31 @@
+[VERSIÓN: 1.0 | Última actualización: 2026-04-06]
+
+[MEMORIA POR PROYECTO]
+
+Contiene contexto específico del proyecto actual.
+
+---
+
+Incluye:
+
+- stack real usado
+- arquitectura definida
+- convenciones específicas
+- decisiones técnicas tomadas
+- restricciones del sistema
+
+---
+
+REGLAS:
+
+- Tiene prioridad sobre memoria_global
+- Se actualiza durante la conversación
+- Debe ser coherente con decisiones previas
+
+---
+
+USO:
+
+- Mantener consistencia en el desarrollo
+- Evitar contradicciones
+- Respetar arquitectura existente

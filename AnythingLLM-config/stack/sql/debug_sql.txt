@@ -1,0 +1,156 @@
+[DEBUG SQL]
+
+---
+
+[CATEGORÍAS DE PROBLEMA]
+
+1. QUERIES LENTAS
+   Síntomas: timeout, alta latencia, tabla bloqueada
+   Diagnóstico:
+   → EXPLAIN SELECT ... (buscar type: ALL — full scan)
+   → SHOW PROCESSLIST — ver queries en ejecución
+   → slow_query_log en MySQL para capturar queries lentas
+   
+   Causas comunes:
+   - Falta de índice en columna filtrada (type: ALL en EXPLAIN)
+   - Función aplicada sobre columna indexada: WHERE YEAR(fecha) = 2026
+   - LIKE '%texto%' — no puede usar índice
+   - JOIN sin índice en la columna de unión
+   - ORDER BY en columna no indexada con dataset grande
+
+2. PROBLEMAS DE ÍNDICES
+   - Índice existe pero no se usa
+     → verificar tipo de dato: columna INT pero se filtra con string '1'
+     → columna de índice dentro de función (LENGTH(name) = 5)
+     → baja selectividad — el optimizador decide que full scan es más barato
+   
+   - Índice compuesto mal ordenado
+     → INDEX (status, created_at) pero la query solo filtra por created_at
+     → el índice compuesto es útil solo cuando la primera columna está en el WHERE
+
+3. PROBLEMAS N+1
+   Síntoma: múltiples queries similares ejecutándose en secuencia
+   Causa: query dentro de loop en el código de aplicación
+   Solución: JOIN o subconsulta que traiga todo de una vez
+   Ejemplo:
+   → MAL: SELECT name FROM users por cada order
+   → BIEN: JOIN users ON orders.user_id = users.id
+
+4. DEADLOCKS Y LOCKS
+   - DEADLOCK: dos transacciones esperándose mutuamente
+     → SHOW ENGINE INNODB STATUS — ver últimos deadlocks
+     → solución: adquirir locks siempre en el mismo orden
+   
+   - LOCK WAIT TIMEOUT: query esperando demasiado para obtener lock
+     → verificar transacciones abiertas sin cerrar
+     → verificar queries de larga duración bloqueando la tabla
+
+5. PROBLEMAS DE DATOS E INTEGRIDAD
+   - Duplicate entry: violación de UNIQUE constraint
+     → usar INSERT ... ON DUPLICATE KEY UPDATE si corresponde
+     → verificar lógica antes de insertar
+   
+   - Cannot add or update a child row: FK constraint violation
+     → el registro padre no existe — verificar orden de inserción
+   
+   - Data truncated: valor demasiado largo para la columna
+     → revisar tamaño del tipo de dato (VARCHAR, INT range)
+
+6. PROBLEMAS DE CONCURRENCIA
+   - Race condition en UPDATE
+     → usar transacción con SELECT ... FOR UPDATE para bloquear la fila
+   
+   - Contador incorrecto bajo concurrencia
+     → usar UPDATE table SET count = count + 1 (atómico)
+     → nunca: read → increment in code → write (no atómico)
+
+---
+
+[PROCESO DE DIAGNÓSTICO]
+
+PASO 1: EJECUTAR EXPLAIN
+```sql
+EXPLAIN SELECT u.id, u.name
+FROM users u
+JOIN orders o ON o.user_id = u.id
+WHERE u.status = 'active';
+```
+Buscar:
+- type: ALL → full scan — necesita índice
+- type: ref / eq_ref → usa índice — bien
+- rows: número alto → scan costoso
+- Extra: Using filesort / Using temporary → potencial problema
+
+PASO 2: VERIFICAR ÍNDICES EXISTENTES
+```sql
+SHOW INDEX FROM nombre_tabla;
+```
+
+PASO 3: ANALIZAR QUERY PLAN CON JSON
+```sql
+EXPLAIN FORMAT=JSON SELECT ...;
+```
+Ver: cost_info para comparar alternativas
+
+PASO 4: IDENTIFICAR CAUSA RAÍZ
+- ¿Falta índice?
+- ¿El índice existe pero no se usa?
+- ¿El problema es de lógica (N+1, subquery ineficiente)?
+- ¿Es un problema de datos (tipos incompatibles, NULLs)?
+
+PASO 5: SOLUCIÓN Y VERIFICACIÓN
+- Aplicar índice o reescribir query
+- Ejecutar EXPLAIN de nuevo para confirmar mejora
+- Verificar en datos reales de volumen similar al productivo
+
+---
+
+[HERRAMIENTAS]
+
+- EXPLAIN / EXPLAIN ANALYZE: análisis de plan de query
+- SHOW PROCESSLIST: queries en ejecución actual
+- SHOW ENGINE INNODB STATUS: estado interno, deadlocks
+- slow_query_log + long_query_time: captura queries lentas
+- pt-query-digest (Percona Toolkit): análisis de slow log
+- MySQL Workbench: visualización del plan de ejecución
+
+---
+
+[OPTIMIZACIONES COMUNES]
+
+CREAR ÍNDICE:
+```sql
+CREATE INDEX idx_orders_user_id ON orders(user_id);
+CREATE INDEX idx_orders_status_date ON orders(status, created_at);
+```
+
+REESCRIBIR SUBQUERY COMO JOIN:
+```sql
+-- Antes (subquery correlacionada)
+SELECT * FROM users WHERE id IN (SELECT user_id FROM orders WHERE total > 100);
+
+-- Después (JOIN)
+SELECT DISTINCT u.id, u.name
+FROM users u
+INNER JOIN orders o ON o.user_id = u.id
+WHERE o.total > 100;
+```
+
+PAGINACIÓN CON KEYSET (volumen alto):
+```sql
+-- Después del último id visto
+SELECT id, name FROM users
+WHERE id > :last_seen_id
+ORDER BY id
+LIMIT 20;
+```
+
+---
+
+[FORMATO DE RESPUESTA DEBUG SQL]
+
+1. PROBLEMA IDENTIFICADO: [tipo de problema]
+2. EVIDENCIA: [output de EXPLAIN u observación]
+3. CAUSA RAÍZ: [por qué ocurre]
+4. SOLUCIÓN: [query corregida o índice a crear]
+5. VERIFICACIÓN: [cómo confirmar la mejora]

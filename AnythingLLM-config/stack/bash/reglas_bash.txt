@@ -1,0 +1,61 @@
+[REGLAS DE SCRIPTING BASH / SHELL]
+
+El scripting en Bash es propenso a fallos catastróficos silenciosos. Toda solución que involucre Bash asume un entorno de producción estricto y seguro.
+
+---
+
+[1. MODO ESTRICTO OBLIGATORIO]
+Todo script **DEBE** comenzar forzosamente con el "Bash Strict Mode":
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+```
+- `set -e`: Detiene el script inmediatamente si cualquier comando falla.
+- `set -u`: Falla si se intenta usar una variable no definida.
+- `set -o pipefail`: Asegura que si un comando en una tubería falla (ej: `cmd1 | cmd2`), todo el bloque devuelva error y detenga el script.
+
+---
+
+[2. EXPANSIÓN Y COTIZACIÓN DE VARIABLES (QUOTING)]
+- **SIEMPRE enclose las variables entre comillas dobles** para evitar partición de palabras por espacios (Word Splitting).
+  - Mal: `rm $DIRECTORIO/*.txt`
+  - Bien: `rm "${DIRECTORIO}"/*.txt`
+- Preferir `${VAR}` en lugar de `$VAR` para delimitar claramente el nombre de la variable.
+- Usar `$(comando)` preferentemente antes que \`comando\` (backticks están obsoletos por legibilidad y anidamiento).
+
+---
+
+[3. EVALUACIÓN Y CONDICIONALES]
+- Usar `[[ ]]` en lugar de `[ ]` nativo POSIX para los condicionales, ya que previenen errores de sintaxis si las variables están vacías, soportan expresiones regulares y condicionales `&&` `||` más seguros.
+  - Mal: `if [ $VAR = "test" ]; then`
+  - Bien: `if [[ "${VAR}" == "test" ]]; then`
+- Preferir cálculos aritméticos con `(( ))`.
+  - Bien: `(( contador++ ))` o `if (( contador > 5 )); then`
+
+---
+
+[4. PARSING PELIGROSO - ANTI-PATRONES BASH]
+- **NUNCA parsear la salida de `ls`**. Un archivo con saltos de línea o espacios rompe todo. Utilizar globbing o `find`.
+  - Mal: `for file in $(ls *.txt); do`
+  - Bien: `for file in *.txt; do`
+- **NUNCA usar `eval`** a menos que sea la ultimísima instancia documentada.
+- No asumir que el directorio actual de ejecución (`$PWD`) es el lugar donde reside el script. 
+  - Bien: `DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"`
+
+---
+
+[5. MANEJO DE ARCHIVOS TEMPORALES]
+- No crear archivos hardcodeados en `/tmp/temporal.txt` (vulnerabilidad de Symlink attack).
+- Usar SIEMPRE `mktemp`.
+  - `TMP_FILE=$(mktemp)`
+  - Borrar el archivo temporal idealmente con un `trap`.
+  - `trap 'rm -f "${TMP_FILE}"' EXIT`
+
+---
+
+[6. SALIDAS Y REDIRECCIONES]
+- Los mensajes de error o logs de purga deben ir a la salida estándar de errores (STDERR).
+  - `echo "Error grave o aviso crítico" >&2`
+  - Reservar `STDOUT` sólo para la salida real utilitaria de la función.
+- Si un script puede fallar predeciblemente y no es fatal (y se usa `set -e`), aplicar `|| true`.
+  - `mkdir mi_carpeta 2>/dev/null || true`

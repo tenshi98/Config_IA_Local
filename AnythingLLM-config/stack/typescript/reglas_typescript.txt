@@ -1,0 +1,113 @@
+[TYPESCRIPT — REGLAS DE DESARROLLO]
+
+---
+
+[CONFIGURACIÓN BASE]
+
+- Siempre con strict: true en tsconfig.json
+- noImplicitAny: true
+- strictNullChecks: true
+- noUnusedLocals: true
+- noUnusedParameters: true
+
+---
+
+[TIPADO]
+
+- Tipar SIEMPRE los parámetros de funciones
+- Tipar el retorno de funciones públicas explícitamente
+- Nunca usar `any` — usar `unknown` si el tipo es desconocido y hacer type guard
+- Nunca usar `as` (type assertion) sin justificación — es eludir el type system
+- Preferir `const` sobre `let`, nunca `var`
+
+INTERFACES vs TYPES:
+- `interface`: para objetos que pueden extenderse o implementarse por clases
+- `type`: para uniones, intersecciones, tipos primitivos complejos, aliases
+- No mezclar sin razón — elegir uno y ser consistente en el proyecto
+
+GENERICS:
+- Usar generics en lugar de any cuando la función opera sobre múltiples tipos
+- Nombres descriptivos: T es aceptable, pero TUser, TResponse son mejores
+- Agregar constraints cuando sea posible: <T extends object>
+
+---
+
+[MANEJO DE NULOS]
+
+- Nunca usar `!` (non-null assertion) sin saber con certeza que no es null
+- Usar optional chaining: `objeto?.propiedad`
+- Usar nullish coalescing: `valor ?? 'default'`
+- Type guards para narrowing:
+  ```typescript
+  if (typeof valor === 'string') { ... }
+  if (valor instanceof Error) { ... }
+  ```
+
+---
+
+[ASYNC]
+
+- async/await obligatorio — no .then() salvo chaining puntual
+- Tipar siempre las promesas: Promise<User>, Promise<void>
+- Manejo de errores con try/catch en async functions
+- Nunca ignorar errores con catch vacío
+
+---
+
+[ENUMS Y CONSTANTES]
+
+- Preferir `const enum` para valores fijos en tiempo de compilación
+- O usar `as const` con objetos literales para evitar overhead de enum
+- Nunca usar magic strings — definir tipos unión o enums
+
+```typescript
+// Preferido
+type Status = 'active' | 'inactive' | 'pending'
+// O
+const STATUS = { ACTIVE: 'active', INACTIVE: 'inactive' } as const
+```
+
+---
+
+[ORGANIZACIÓN]
+
+- Un tipo/interface por archivo si es complejo
+- Archivos de tipos en carpeta `types/` o junto al módulo que los usa
+- Exportar tipos con `export type { ... }` cuando sea solo para tipos
+- Barrel exports (index.ts) para módulos con múltiples exports
+
+---
+
+[ANTI-PATRONES TYPESCRIPT]
+
+- Usar `any` para "apagar" errores de tipos
+- `as unknown as TipoDeseado` (double cast para eludir tipos)
+- Interfaces vacías o con un solo campo (preferir type alias)
+- Enums numéricos sin valores explícitos (difícil de debuggear)
+- Omitir tipos de retorno en funciones públicas
+
+---
+
+[COMPATIBILIDAD CON JS]
+
+- TypeScript detectado junto a JS → aplicar estas reglas TS
+- Si el proyecto mezcla JS y TS → recomendar migración gradual con allowJs: true
+- No asumir que reglas_js son suficientes para TS
+
+---
+
+[FRAMEWORKS SOPORTADOS (ESPECÍFICOS PARA TS)]
+
+NESTJS:
+- Seguir estrictamente la arquitectura modular requerida 
+- Utilizar `ConfigModule` tipado activamente rehusando el acceso voluble directo a llamadas `process.env.*` en constructores o controladores
+- Abrazar la Inyección de Dependencias (DI) mediante el decorador @Injectable() y custom providers
+- Automatización e integridad OpenAPI instanciando el `@nestjs/swagger` obligatoriamente sobre el app root
+- Emplear Prisma ORM explícitamente en el core (fuertemente preferido en ecosistema typescript) sobre TypeORM delegando la conexión segura por DataAccess abstractions
+
+ANGULAR:
+- Tipar observables estrictamente (Observable<T>)
+- Aprovechar la verificación de tipos de plantillas estricta (strictTemplates)
+- Tipado seguro de Reactive Forms cuando sea aplicable (Angular 14+)
+
+*Nota: Para React y Vue.js, consultar reglas_js.txt, aplicando las convenciones de tipado de TS estrictas (ej. tipar Props y genéricos).*

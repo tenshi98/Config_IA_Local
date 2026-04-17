@@ -1,0 +1,64 @@
+[DEBUG FLUTTER]
+
+---
+
+[PROBLEMAS COMUNES]
+
+- setState en widget disposed
+- Provider/Riverpod no inicializado correctamente
+- BuildContext usado fuera del árbol de widgets
+- FutureBuilder reconstruyendo en cada frame (Future no almacenado)
+- Widgets const que no pueden serlo (causan rebuild excesivo)
+- Memory leaks en StreamSubscription sin cancelar en dispose()
+- Navigator.pop sin verificar si el contexto sigue montado
+
+---
+
+[ANÁLISIS]
+
+Para cada error identificar:
+
+1. CAUSA RAÍZ
+   - ¿es de estado, ciclo de vida, async o arquitectura?
+
+2. IMPACTO
+   - ¿afecta render, lógica, datos o performance?
+
+3. SOLUCIÓN
+   - específica para Flutter, no genérica
+
+---
+
+[EDGE CASES FLUTTER]
+
+- Hot reload vs hot restart (variables no reiniciadas)
+- Orientation changes y pérdida de estado
+- Platform channels — errores silenciosos en Android/iOS
+- Keys incorrectas en listas dinámicas
+- Overflow en texto/layout sin constraints definidos
+
+---
+
+[PERFORMANCE]
+
+- Identificar widgets que hacen rebuild innecesario
+- Verificar uso de const constructors
+- Revisar uso de Image.network sin caché
+- Detectar listas sin ListView.builder
+
+---
+
+[HERRAMIENTAS]
+
+- Flutter DevTools: performance, memory, widget inspector
+- debugPrint() > print() en producción
+- assert() para detección temprana en debug mode
+
+---
+
+[FORMATO DE RESPUESTA DEBUG]
+
+1. Causa raíz identificada
+2. Por qué ocurre (contexto Flutter)
+3. Solución con código corregido
+4. Cómo prevenir en el futuro

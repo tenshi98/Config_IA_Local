@@ -1,0 +1,109 @@
+[DEBUG JAVASCRIPT]
+
+---
+
+[CATEGORÍAS DE ERROR]
+
+1. ERRORES ASYNC
+   - Unhandled Promise Rejection
+     → falta try/catch en función async
+     → .catch() no añadido a cadena de promesas
+   - async function sin await interno
+     → la función retorna Promise sin resolver — bug silencioso
+   - await fuera de async function
+     → SyntaxError — reorganizar la función como async
+   - Promise.all() fallando silenciosamente
+     → una promesa rechazada rechaza todo el array — verificar con allSettled si se necesitan todos los resultados
+
+2. ERRORES DE SCOPE Y CLOSURES
+   - Variable undefined en closure
+     → captura del valor en el momento incorrecto (loop + var)
+     → solución: const en el loop o arrow function
+   - this undefined o incorrecto
+     → en callbacks regulares `this` no es el objeto esperado
+     → solución: arrow function o .bind(this)
+
+3. ERRORES DE TIPO
+   - Cannot read properties of undefined/null
+     → acceder a propiedad de objeto no inicializado
+     → usar optional chaining: obj?.property
+   - NaN en operaciones numéricas
+     → parseInt/parseFloat de string no numérico
+     → verificar con Number.isNaN() antes de operar
+   - [object Object] en template strings
+     → objeto interpolado sin .toString() útil
+     → usar JSON.stringify() o acceder a la propiedad específica
+
+4. MEMORY LEAKS
+   - Event listeners no removidos
+     → useEffect sin cleanup (React), removeEventListener olvidado
+   - Closures que retienen referencias grandes
+     → funciones que capturan arrays/objetos grandes innecesariamente
+   - Timers no cancelados
+     → clearInterval/clearTimeout en cleanup
+
+5. ERRORES DE RED (fetch/axios)
+   - fetch no rechaza en HTTP 4xx/5xx (solo en error de red)
+     → verificar response.ok antes de parsear
+   - CORS bloqueado
+     → configurar headers en el servidor, no en el cliente
+   - Race condition en múltiples requests
+     → usar AbortController para cancelar requests anteriores
+
+---
+
+[PROCESO DE DIAGNÓSTICO]
+
+PASO 1: LEER EL ERROR EN CONSOLA
+- Mensaje exacto del error
+- Stack trace — identificar la línea propia (no de librería)
+- ¿Es un error síncrono o de una promesa rechazada?
+
+PASO 2: REPRODUCIR CON DATOS SIMPLES
+- ¿El error ocurre siempre o según ciertos datos?
+- ¿Es timing-dependiente? (async problem)
+
+PASO 3: AISLAR
+- Agregar console.log estratégicos para rastrear el flujo
+- Usar debugger; para breakpoint en DevTools
+- Verificar el valor de variables clave antes del punto de fallo
+
+PASO 4: CAUSA RAÍZ
+- ¿Es un problema de tipos? (undefined, null, NaN)
+- ¿Es un problema de timing? (async no esperado)
+- ¿Es un problema de scope? (this, closures)
+- ¿Es un problema de estado? (mutación, stale reference)
+
+PASO 5: VERIFICAR EN RED Y HERRAMIENTAS
+- Network tab: ¿el request se envía? ¿la respuesta es la esperada?
+- Console: ¿hay warnings previos al error?
+- Memory tab: ¿hay crecimiento de memoria en el tiempo?
+
+---
+
+[HERRAMIENTAS]
+
+- Chrome DevTools: Sources (breakpoints), Network, Memory, Performance
+- debugger; statement para parar ejecución en línea específica
+- console.table() para arrays de objetos
+- console.time() / console.timeEnd() para medir rendimiento
+- Lighthouse para auditoría de performance
+
+---
+
+[ERRORES COMUNES EN NODE.JS]
+
+- ENOENT: archivo no encontrado — verificar path con path.resolve()
+- ECONNREFUSED: servicio externo no disponible — manejar con retry
+- EventEmitter memory leak: muchos listeners — usar off() para limpiar
+- require() de módulo ESM — migrar a import dinámico: await import()
+
+---
+
+[FORMATO DE RESPUESTA DEBUG]
+
+1. TIPO DE ERROR: [categoría específica]
+2. CAUSA RAÍZ: [descripción concisa]
+3. EVIDENCIA: [qué en el código lo causa]
+4. SOLUCIÓN: [código corregido]
+5. PREVENCIÓN: [patrón o regla para evitarlo]

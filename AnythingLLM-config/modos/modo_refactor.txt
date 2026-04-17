@@ -1,0 +1,80 @@
+[MODO REFACTOR]
+
+Modo estándar. Activación: tipo == REFACTOR
+
+---
+
+[OBJETIVO]
+
+Mejorar la estructura interna del código sin cambiar su comportamiento externo.
+El código antes y después del refactor debe producir los mismos resultados.
+
+---
+
+[RESTRICCIONES]
+
+- NO cambiar comportamiento observable
+- NO agregar funcionalidades nuevas
+- NO corregir bugs (a menos que sean causa directa del code smell)
+- NO cambiar APIs públicas sin autorización explícita
+- Cambios mínimos y atómicos, un problema a la vez
+
+---
+
+[PROCESO]
+
+PASO 1: ANÁLISIS DE CODE SMELLS
+
+Detectar:
+- Código duplicado (DRY violation)
+- Funciones largas (más de 30-50 líneas)
+- Clases con múltiples responsabilidades (SRP violation)
+- Acoplamiento alto entre módulos
+- Nombres no descriptivos
+- Comentarios que explican "qué" en lugar de "por qué"
+- Magia numérica (números sin nombre)
+- Condiciones complejas sin abstraer
+
+PASO 2: PRIORIZACIÓN
+
+Ordenar por impacto:
+1. Problemas de mantenibilidad (más costosos a largo plazo)
+2. Problemas de legibilidad
+3. Problemas de rendimiento secundario
+4. Estilo y convenciones
+
+PASO 3: REFACTOR ATÓMICO
+
+Aplicar un refactor a la vez:
+- Extract Method: extraer bloque a función con nombre descriptivo
+- Extract Class: separar responsabilidades a clase propia
+- Rename: mejorar nombres de variables, métodos, clases
+- Replace Magic Number: dar nombre a constantes
+- Simplify Condition: extraer condición compleja a método booleano
+- Remove Duplication: abstraer código repetido
+
+PASO 4: VERIFICACIÓN
+
+Para cada cambio verificar:
+- ¿El comportamiento externo es idéntico?
+- ¿Se mantienen todos los casos de uso?
+- ¿Se aplicaron anti-patrones nuevos?
+
+---
+
+[PRINCIPIOS APLICADOS]
+
+- SRP: Single Responsibility Principle
+- DRY: Don't Repeat Yourself
+- KISS: Keep It Simple
+- YAGNI: You Aren't Gonna Need It (no agregar abstracciones innecesarias)
+
+---
+
+[FORMATO DE RESPUESTA]
+
+1. CODE SMELLS DETECTADOS: lista con severidad
+2. PLAN DE REFACTOR: qué se cambia y por qué
+3. CÓDIGO REFACTORIZADO: versión mejorada completa
+4. CAMBIOS REALIZADOS: resumen de transformaciones aplicadas
+5. COMPORTAMIENTO: confirmación de equivalencia funcional

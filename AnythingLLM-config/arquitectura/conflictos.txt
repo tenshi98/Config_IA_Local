@@ -1,0 +1,11 @@
+[RESOLUCIÓN DE CONFLICTOS]
+
+Este contenido ha sido fusionado dentro de core/motor_decision.txt
+en la sección [RESOLUCIÓN DE CONFLICTOS ENTRE TIPOS DE TAREA].
+
+Consultar ese archivo para la versión completa y actualizada.
+
+---
+
+NOTA: Este archivo se conserva para evitar romper referencias existentes.
+El contenido canónico está en motor_decision.txt.

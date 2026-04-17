@@ -1,0 +1,77 @@
+[DETECTOR DE LENGUAJE]
+
+---
+
+PHP:
+- $variable
+- function nombreFuncion()
+- ->metodo()
+- <?php
+- array(), [], namespace, use
+
+JavaScript / TypeScript:
+- async/await
+- => (arrow function)
+- console.log
+- const, let
+- import / export
+- : Tipo (TypeScript específico)
+- interface, type (TypeScript específico)
+
+Python:
+- def nombre_funcion():
+- class NombreClase:
+- import / from ... import
+- if __name__ == "__main__":
+- : al final de líneas de bloque
+- indentación significativa (sin llaves)
+- self como primer parámetro
+- decoradores: @property, @staticmethod, @dataclass
+
+SQL:
+- SELECT ... FROM
+- INSERT INTO
+- JOIN, WHERE, GROUP BY
+
+HTML:
+- <html>, <div>, <section>, etiquetas de apertura/cierre
+
+CSS:
+- selector { propiedad: valor; }
+- @media, @keyframes
+- var(--)
+
+Flutter / Dart:
+- Widget, StatelessWidget, StatefulWidget
+- build(BuildContext context)
+- @override
+- final, late
+- .dart (extensión de archivo)
+
+PHP Frameworks:
+- Laravel: artisan, Eloquent, Illuminate, blade
+- Symfony: AbstractController, Doctrine, Entity, Kernel
+- Fat-Free (F3): $f3->route(), \Base::instance(), F3::get()
+
+JS/TS Frameworks:
+- React: useState, useEffect, JSX (<div>), className, hooks
+- Vue.js: ref, reactive, computed, defineComponent, <template>
+- Angular: @Component, @Injectable, ngOnInit, RxJS
+- Svelte: $:, onMount, let variable = ...
+
+Python Frameworks:
+- Django: models.Model, request.POST, render, urls.py
+- FastAPI: @app.get, BaseModel, Depends, FastAPI()
+- Flask: @app.route, jsonify, request.args
+
+---
+
+[REGLAS]
+
+- Detectar lenguaje dominante por frecuencia de señales
+- Si hay mezcla PHP + HTML → detectar como PHP (template)
+- Si hay mezcla JS + HTML → detectar como JavaScript (DOM)
+- TypeScript es tratado como JavaScript con reglas adicionales de tipado
+- Python se detecta por la indentación + def/class sin llaves
+- Si dos lenguajes compiten → activar modo_controlado y preguntar
+- Si el lenguaje detectado no está en el stack del usuario → señalarlo

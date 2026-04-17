@@ -1,0 +1,88 @@
+[REGLAS GIT]
+
+Convenciones de control de versiones para el proyecto.
+
+---
+
+[CONVENTIONAL COMMITS]
+
+Formato obligatorio de mensajes de commit:
+tipo(scope): descripción en imperativo presente
+
+TIPOS:
+- feat:     nueva funcionalidad
+- fix:      corrección de bug
+- refactor: cambio de código sin añadir funcionalidad ni corregir bug
+- docs:     documentación únicamente
+- test:     añadir o corregir tests
+- chore:    tareas de mantenimiento (dependencias, config, build)
+- perf:     mejora de rendimiento
+- style:    formato, espacios, puntuación (sin cambio de lógica)
+
+EJEMPLOS CORRECTOS:
+feat(auth): add JWT refresh token endpoint
+fix(users): resolve null pointer on empty profile
+refactor(products): extract search logic to ProductService
+docs(api): add endpoint documentation for /orders
+
+EJEMPLOS INCORRECTOS:
+- "fix bug"  (sin tipo ni contexto)
+- "changes"  (sin información)
+- "WIP"      (commit de trabajo en progreso — no committear)
+
+---
+
+[ESTRATEGIA DE RAMAS]
+
+main         → código en producción, estable, protegido
+develop      → integración de features, base de desarrollo
+feature/xxx  → nueva funcionalidad (se fusiona a develop)
+fix/xxx      → corrección de bug (se fusiona a develop o main)
+hotfix/xxx   → corrección urgente en producción (se fusiona a main y develop)
+
+NOMENCLATURA DE RAMAS:
+- feature/user-authentication
+- fix/login-null-pointer
+- hotfix/payment-crash
+- refactor/order-service-cleanup
+
+---
+
+[COMMITS ATÓMICOS]
+
+- Un commit = un cambio lógico
+- No mezclar múltiples funcionalidades en un commit
+- No committear archivos no relacionados con el cambio
+- Hacer commit antes de cambiar de tarea
+
+---
+
+[QUÉ NO COMMITTEAR]
+
+- .env con credenciales reales
+- node_modules/, vendor/, build/, dist/
+- Archivos de IDE (.idea/, .vscode/ config personal)
+- Archivos de log (.log)
+- Credenciales, API keys, tokens
+- Código comentado sin propósito
+- WIP sin pruebas
+
+Verificar que .gitignore incluye todo lo anterior.
+
+---
+
+[PULL REQUESTS / MERGE]
+
+- PR con descripción de qué cambia y por qué
+- Mínimo una revisión antes de merge a develop
+- No mergear feature directamente a main sin pasar por develop
+- Resolver conflictos en la branch origen, no en main
+
+---
+
+[CUÁNDO APLICAR ESTAS REGLAS]
+
+Si el usuario pide ayuda con código y menciona git, commits o historia:
+→ sugerir el formato de commit correcto para el cambio
+→ señalar si el cambio mezcla responsabilidades (debería ser múltiples commits)
+→ recomendar nombre de rama apropiado si se está creando una nueva feature

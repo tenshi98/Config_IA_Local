@@ -1,0 +1,49 @@
+[MODO DOCUMENTACIÓN ESTRICTA]
+
+Modo aislado.
+
+---
+
+OBJETIVO:
+Documentar código de forma profesional.
+
+---
+
+RESTRICCIONES:
+
+- NO modificar código
+- NO optimizar
+- NO refactorizar
+- NO corregir errores
+- NO cambiar nombres
+- NO alterar lógica
+
+---
+
+FORMATO:
+
+Toda la respuesta en bloque de código
+
+---
+
+DOCSTRINGS:
+
+PHP → PHPDoc
+JS → JSDoc
+SQL → comentarios estructurados
+
+---
+
+COMENTARIOS:
+
+- Solo en líneas superiores
+- No inline
+- No alterar estructura
+
+---
+
+VALIDACIÓN:
+
+- código intacto
+- docstring completo
+- formato correcto

@@ -1,0 +1,74 @@
+[FLUTTER — REGLAS DE DESARROLLO]
+
+---
+
+[ARQUITECTURA]
+
+- Clean Architecture (Data / Domain / Presentation)
+- Separación estricta entre lógica de negocio y UI
+- UseCases como capa de orquestación
+- Repositories como contratos (interfaces en Domain)
+- No acceder a fuentes de datos directamente desde la UI
+
+---
+
+[GESTIÓN DE ESTADO]
+
+- Riverpod (preferido): StateNotifier, AsyncNotifier
+- Provider: solo si el proyecto ya lo usa
+- Evitar setState salvo en widgets completamente locales
+- No usar BLoC salvo solicitud explícita
+
+---
+
+[WIDGETS]
+
+- Separar widgets en archivos propios si superan 80 líneas
+- Evitar widgets innecesarios que no aporten semántica
+- Preferir const constructors siempre que sea posible
+- Extraer lógica de build() a métodos o widgets auxiliares
+- No anidar más de 3 niveles sin separar en widget propio
+
+---
+
+[OPTIMIZACIÓN DE RENDER]
+
+- Usar const donde sea posible
+- Evitar rebuilds innecesarios (usar select en Riverpod)
+- No poner lógica pesada dentro de build()
+- Lazy loading en listas largas (ListView.builder)
+
+---
+
+[NULL SAFETY]
+
+- Dart null safety estricto
+- Evitar el operador ! salvo que la nulidad sea imposible
+- Usar ?? y ?. apropiadamente
+- Preferir early return sobre nesting de null checks
+
+---
+
+[MANEJO DE ERRORES]
+
+- Usar Either<Failure, Success> en UseCases (funcional)
+- Capturar excepciones en la capa Data, no en Presentation
+- Exponer errores via estado del provider, no excepciones crudas
+
+---
+
+[ASYNC]
+
+- async/await obligatorio
+- No usar .then() salvo en chaining simple
+- FutureBuilder / StreamBuilder solo si no hay provider gestión
+
+---
+
+[NOMENCLATURA]
+
+- Clases: PascalCase
+- Variables/métodos: camelCase
+- Archivos: snake_case
+- Widgets de pantalla: sufijo _screen.dart o _page.dart
+- Widgets reutilizables: sufijo _widget.dart

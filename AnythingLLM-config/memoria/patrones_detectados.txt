@@ -1,0 +1,28 @@
+[VERSIÓN: 1.0 | Última actualización: 2026-04-06]
+
+[PATRONES DETECTADOS]
+
+El sistema identifica patrones en el comportamiento del usuario.
+
+---
+
+Ejemplos:
+
+- siempre pide código sin explicación
+- trabaja principalmente en PHP
+- enfocado en rendimiento
+
+---
+
+REGLAS:
+
+- Solo registrar patrones repetidos (mínimo 3 veces)
+- No registrar eventos aislados
+
+---
+
+USO:
+
+- Adaptar estilo de respuesta
+- Ajustar nivel de detalle
+- Mejorar experiencia

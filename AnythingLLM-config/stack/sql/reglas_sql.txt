@@ -1,0 +1,140 @@
+[SQL — REGLAS DE DESARROLLO]
+
+Base de datos: MySQL / MariaDB (principal)
+Estándar: SQL ANSI con optimizaciones específicas para MySQL
+
+---
+
+[CONSULTAS — REGLAS BASE]
+
+- Nunca SELECT * — seleccionar solo las columnas necesarias
+  → reduce transferencia de datos, evita columnas sensibles accidentales
+- Siempre alias cuando hay JOINs: u.id, o.created_at
+- Usar parámetros preparados para TODA interpolación de valores externos
+- Poner LIMIT en queries de listado que puedan crecer ilimitadamente
+- Ordenar con ORDER BY solo cuando sea necesario — tiene costo
+
+---
+
+[ÍNDICES]
+
+CUÁNDO CREAR:
+- Columnas usadas en WHERE frecuentemente
+- Columnas usadas en JOIN (especialmente FK)
+- Columnas usadas en ORDER BY en queries de alto volumen
+- Columnas de baja cardinalidad (status, tipo) → índice compuesto, no individual
+
+CUÁNDO NO CREAR:
+- Tablas pequeñas (< 1000 filas) — el índice tiene overhead
+- Columnas que se actualizan constantemente — enlentece INSERTs/UPDATEs
+- Columnas con muy poca cardinalidad solas (ej: boolean) — poco selectivo
+
+TIPOS DE ÍNDICE:
+- INDEX (BTREE): para igualdad y rangos (=, <, >, BETWEEN, LIKE 'prefix%')
+- UNIQUE: para constraints de unicidad + índice
+- FULLTEXT: para búsqueda de texto libre (MATCH ... AGAINST)
+- COMPOSITE: (col1, col2) para queries que filtran por ambas columnas juntas
+  → el orden importa: la primera columna debe estar en el WHERE
+
+VERIFICAR:
+- EXPLAIN SELECT ... → detectar full table scans (type: ALL es malo)
+- EXPLAIN FORMAT=JSON para análisis detallado
+
+---
+
+[JOINs]
+
+- Preferir JOIN (INNER JOIN) sobre subqueries correlacionadas
+- LEFT JOIN solo cuando se necesitan filas sin match
+- Evitar más de 5 JOINs en una query — señal de arquitectura cuestionable
+- Las columnas de JOIN deben tener índice en ambas tablas
+- Verificar que los tipos de datos coincidan en los JOINs (int con int, etc.)
+
+```sql
+-- Correcto
+SELECT u.id, u.name, o.total
+FROM users u
+INNER JOIN orders o ON o.user_id = u.id
+WHERE u.status = 'active'
+  AND o.created_at >= '2026-01-01'
+LIMIT 100;
+
+-- Incorrecto
+SELECT * FROM users WHERE id IN (
+    SELECT user_id FROM orders WHERE total > 100
+);
+-- Preferir JOIN sobre subquery correlacionada
+```
+
+---
+
+[TRANSACCIONES]
+
+- Usar transacciones para operaciones que deben ser atómicas
+- Siempre manejar ROLLBACK en caso de error
+- Mantener transacciones cortas — no hacer operaciones lentas dentro
+- No hacer llamadas a APIs o servicios externos dentro de una transacción
+
+```sql
+START TRANSACTION;
+
+INSERT INTO orders (user_id, total) VALUES (?, ?);
+UPDATE inventory SET stock = stock - ? WHERE product_id = ?;
+
+-- Si algo falla → ROLLBACK
+-- Si todo ok → COMMIT
+COMMIT;
+```
+
+---
+
+[RENDIMIENTO]
+
+- Evitar funciones en columnas indexadas en el WHERE:
+  → MAL:  WHERE YEAR(created_at) = 2026
+  → BIEN: WHERE created_at BETWEEN '2026-01-01' AND '2026-12-31'
+
+- Evitar LIKE '%valor%' — no usa índice (full scan)
+  → BIEN: LIKE 'valor%' (usa índice de prefijo)
+  → Para búsqueda libre: usar FULLTEXT index
+
+- Paginación eficiente con volumen alto:
+  → MAL:  LIMIT 10 OFFSET 10000 (escanea 10010 filas)
+  → BIEN: WHERE id > :last_id ORDER BY id LIMIT 10 (keyset pagination)
+
+- COUNT(*) es eficiente en MySQL InnoDB para conteos exactos
+- COUNT(columna) excluye NULLs — usar con intención
+
+---
+
+[DISEÑO DE ESQUEMA]
+
+- Usar tipos de dato correctos y mínimos necesarios:
+  TINYINT para flags/status, INT para IDs normales, BIGINT para alta escala
+- Evitar VARCHAR(255) por defecto — definir el tamaño real esperado
+- NOT NULL en columnas que no deben ser nulas — permite optimizaciones
+- Timestamps: usar DATETIME o TIMESTAMP según zona horaria sea relevante
+- IDs: considerar UUID vs BIGINT AUTO_INCREMENT según escala y distribución
+- Normalización: 3NF como punto de partida, desnormalizar solo con justificación
+
+---
+
+[NOMENCLATURA]
+
+- Tablas: snake_case, plural (users, order_items, product_categories)
+- Columnas: snake_case (created_at, user_id, is_active)
+- Claves foráneas: {tabla_singular}_id (user_id, product_id)
+- Índices: idx_{tabla}_{columna} (idx_users_email, idx_orders_user_id)
+- Índices únicos: uq_{tabla}_{columna} (uq_users_email)
+- Procedimientos/funciones: verbos en snake_case (get_active_users)
+
+---
+
+[SEGURIDAD SQL]
+
+Ver reglas_seguridad.txt para detalle completo.
+Resumen:
+- Parámetros preparados SIEMPRE para valores externos
+- Usuario de BD con mínimos privilegios necesarios
+- No exponer IDs secuenciales — usar UUIDs donde aplique
+- Cifrar columnas sensibles (contraseñas con bcrypt, no en SQL)

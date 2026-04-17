@@ -1,0 +1,78 @@
+[REGLAS DE API REST]
+
+Convenciones transversales obligatorias para el diseño e implementación de APIs en cualquier lenguaje backend (PHP, Python, JavaScript, TypeScript, etc.).
+
+---
+
+[FORMATO DE ENDPOINTS]
+
+- Nombres siempre en plural (ej. `/users`, no `/user`).
+- Todo en minúsculas y separado por guiones o snake_case según el framework, pero preferiblemente kebab-case para URLs (`/order-items`).
+- Jerarquía lógica anidada para recursos dependientes (`/users/{id}/orders`).
+- Evitar verbos en las URIs.
+  - INCORRECTO: `/create-user`, `/deleteOrder`
+  - CORRECTO: `POST /users`, `DELETE /orders/{id}`
+
+---
+
+[VERBOS HTTP]
+
+Usar semántica estricta HTTP:
+- GET: Lectura (no debe tener side-effects, ni body en la request).
+- POST: Creación de recursos u operaciones complejas de negocio (ej. `/checkout/process`).
+- PUT: Modificación/Reemplazo completo de un recurso.
+- PATCH: Modificación parcial de un recurso.
+- DELETE: Eliminación física o lógica.
+
+---
+
+[ESTADOS DE RESPUESTA HTTP OBLIGATORIOS]
+
+NUNCA devolver 200 OK con un JSON de error interno.
+- `200 OK`: Éxito genérico.
+- `201 Created`: Éxito tras un POST creando un recurso.
+- `204 No Content`: Éxito tras un DELETE o PUT sin cuerpo a devolver.
+- `400 Bad Request`: Error de validación del payload.
+- `401 Unauthorized`: Falta token JWT o cookie, credenciales inválidas.
+- `403 Forbidden`: Tiene token válido pero no permisos de rol para este recurso.
+- `404 Not Found`: Recurso no existe.
+- `422 Unprocessable Entity`: Errores de validación semántica interna.
+- `429 Too Many Requests`: Rate Limiting alcanzado.
+- `500 Internal Server Error`: Errores controlados de lógica profunda o no controlados. NINGÚN DETALLE DEL STACK TRACE.
+
+---
+
+[ESTRUCTURA DE PAYLOADS]
+
+Se recomienda estandarizar los JSON de respuesta con envoltorios (Wrappers) para consistencia de parseo en el Frontend:
+
+Respuesta de Éxito:
+```json
+{
+  "success": true,
+  "data": { ... recurso ... },
+  "meta": { ... info de paginación si aplica ... }
+}
+```
+
+Respuesta de Error:
+```json
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_FAILED",
+    "message": "Mensaje humanamente legible (ej. El correo ya existe)",
+    "details": [ ... info técnica como campos inválidos ... ]
+  }
+}
+```
+
+---
+
+[SEGURIDAD Y AUTENTICACIÓN]
+
+- APIs stateless. Si se requiere sesión, usar JWT (JSON Web Tokens).
+- Para tokens JWT cortos: usar LocalStorage/memoria. Para durables críticos: HttpOnly Secure Cookies.
+- Implementar CORS (Cross-Origin Resource Sharing) restringiendo orígenes.
+- Validar SIEMPRE parámetros URL, Query Strings y JSON Body (usando Request validation en Laravel, Zod en JS/TS, o Pydantic en FastAPI).
+- Evitar el Mass Assignment (nunca pasar `request->all()` directamente al modelo en updates/creates).

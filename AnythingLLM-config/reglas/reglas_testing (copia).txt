@@ -1,0 +1,297 @@
+[REGLAS DE TESTING]
+
+El sistema aplica estas reglas cuando genera código o cuando el usuario
+pide tests, o cuando el código generado debería incluir tests.
+
+---
+
+[PRINCIPIOS BASE]
+
+- Testear comportamiento, no implementación interna
+- Un test = un comportamiento verificado
+- Tests deben ser independientes entre sí (sin orden requerido)
+- Tests deben ser determinísticos (mismo resultado siempre)
+- Nombres descriptivos: test_should_return_null_when_user_not_found
+- AAA Pattern: Arrange → Act → Assert
+
+---
+
+[PIRÁMIDE DE TESTS]
+
+UNITARIOS (base — más cantidad):
+- Testean una función/clase en aislamiento
+- Mockear dependencias externas (DB, APIs, email)
+- Rápidos de ejecutar (ms por test)
+- Sin efectos secundarios
+
+DE INTEGRACIÓN (medio):
+- Testean la interacción entre componentes reales
+- Pueden usar DB de test real
+- Verifican que los módulos trabajen juntos correctamente
+
+E2E / FUNCIONALES (cima — menos cantidad):
+- Testean flujos completos del usuario
+- Lentos pero de alto valor para flujos críticos
+- Solo para casos de uso principales
+
+---
+
+[PHP — TESTING]
+
+Framework: PHPUnit
+Convenciones:
+```php
+class UserServiceTest extends TestCase
+{
+    private UserService $service;
+    private UserRepository $repository;
+
+    protected function setUp(): void
+    {
+        $this->repository = $this->createMock(UserRepository::class);
+        $this->service = new UserService($this->repository);
+    }
+
+    public function test_should_return_user_when_id_exists(): void
+    {
+        // Arrange
+        $expected = new User(id: 1, name: 'Test');
+        $this->repository
+            ->expects($this->once())
+            ->method('findById')
+            ->with(1)
+            ->willReturn($expected);
+
+        // Act
+        $result = $this->service->getUser(1);
+
+        // Assert
+        $this->assertEquals($expected, $result);
+    }
+
+    public function test_should_throw_when_user_not_found(): void
+    {
+        $this->expectException(UserNotFoundException::class);
+        $this->repository->method('findById')->willReturn(null);
+        $this->service->getUser(999);
+    }
+}
+```
+
+Reglas:
+- Método de test siempre empieza con test_
+- Un assert de comportamiento por test (puede haber múltiples asserts técnicos)
+- setUp() para inicializar mocks, no en el constructor
+- No lógica condicional en tests
+
+---
+
+[JAVASCRIPT — TESTING]
+
+Framework: Vitest (preferido) / Jest
+```javascript
+// user.service.test.js
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { UserService } from './user.service.js'
+
+describe('UserService', () => {
+    let service
+    let repository
+
+    beforeEach(() => {
+        repository = { findById: vi.fn() }
+        service = new UserService(repository)
+    })
+
+    it('should return user when id exists', async () => {
+        // Arrange
+        const expected = { id: 1, name: 'Test' }
+        repository.findById.mockResolvedValue(expected)
+
+        // Act
+        const result = await service.getUser(1)
+
+        // Assert
+        expect(result).toEqual(expected)
+        expect(repository.findById).toHaveBeenCalledWith(1)
+    })
+
+    it('should throw UserNotFoundError when user does not exist', async () => {
+        repository.findById.mockResolvedValue(null)
+        await expect(service.getUser(999)).rejects.toThrow('UserNotFoundError')
+    })
+})
+```
+
+---
+
+[PYTHON — TESTING]
+
+Framework: pytest
+```python
+import pytest
+from unittest.mock import Mock, MagicMock
+
+class TestUserService:
+    def setup_method(self):
+        self.repository = Mock()
+        self.service = UserService(self.repository)
+
+    def test_should_return_user_when_id_exists(self):
+        # Arrange
+        expected = User(id=1, name="Test")
+        self.repository.find_by_id.return_value = expected
+
+        # Act
+        result = self.service.get_user(1)
+
+        # Assert
+        assert result == expected
+        self.repository.find_by_id.assert_called_once_with(1)
+
+    def test_should_raise_when_user_not_found(self):
+        self.repository.find_by_id.return_value = None
+        with pytest.raises(UserNotFoundError):
+            self.service.get_user(999)
+
+    @pytest.mark.parametrize("user_id,expected_name", [
+        (1, "Alice"),
+        (2, "Bob"),
+    ])
+    def test_parametrized_cases(self, user_id, expected_name):
+        self.repository.find_by_id.return_value = User(id=user_id, name=expected_name)
+        result = self.service.get_user(user_id)
+        assert result.name == expected_name
+```
+
+---
+
+[QUÉ SIEMPRE TESTEAR]
+
+- Happy path: el caso de uso normal y exitoso
+- Not found / null: cuando el recurso no existe
+- Validación: inputs inválidos (vacío, tipo incorrecto, fuera de rango)
+- Error handling: comportamiento cuando una dependencia falla
+- Límites: valores en el borde del rango válido
+
+---
+
+[QUÉ NO TESTEAR]
+
+- Implementación interna (qué método interno se llamó, salvo contratos)
+- Librerías de terceros (se asume que están testeadas)
+- Getters/setters triviales sin lógica
+- Código de configuración de frameworks
+
+---
+
+[CUÁNDO SUGERIR TESTS]
+
+El sistema sugiere incluir tests cuando:
+- El usuario pide crear un Service, Repository o UseCase
+- El usuario pide debuggear un error que pudo haberse detectado con tests
+- El usuario está en modo REFACTOR (tests de regresión son críticos)
+- La solución tiene lógica condicional compleja
+
+Formato de sugerencia:
+→ Entregar código principal completo
+→ Agregar sección Tests con los casos más críticos
+→ No incluir tests para código trivial sin lógica
+
+---
+
+[FLUTTER / DART — TESTING]
+
+Framework: flutter_test (built-in) + mockito
+```dart
+// user_service_test.dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:app/domain/services/user_service.dart';
+import 'package:app/domain/repositories/user_repository.dart';
+import 'package:app/domain/models/user.dart';
+import 'package:app/domain/exceptions/user_not_found_exception.dart';
+
+@GenerateMocks([UserRepository])
+import 'user_service_test.mocks.dart';
+
+void main() {
+  late UserService service;
+  late MockUserRepository repository;
+
+  setUp(() {
+    repository = MockUserRepository();
+    service = UserService(repository);
+  });
+
+  group('getUser', () {
+    test('should return user when id exists', () async {
+      // Arrange
+      final expected = User(id: 1, name: 'Test');
+      when(repository.findById(1)).thenAnswer((_) async => expected);
+
+      // Act
+      final result = await service.getUser(1);
+
+      // Assert
+      expect(result, equals(expected));
+      verify(repository.findById(1)).called(1);
+    });
+
+    test('should throw UserNotFoundException when user does not exist', () async {
+      // Arrange
+      when(repository.findById(999)).thenAnswer((_) async => null);
+
+      // Act & Assert
+      expect(
+        () => service.getUser(999),
+        throwsA(isA<UserNotFoundException>()),
+      );
+    });
+  });
+}
+```
+
+Widget Test:
+```dart
+// login_screen_test.dart
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:app/features/auth/presentation/screens/login_screen.dart';
+
+void main() {
+  group('LoginScreen', () {
+    testWidgets('should show error when email is empty', (tester) async {
+      // Arrange
+      await tester.pumpWidget(const MaterialApp(home: LoginScreen()));
+
+      // Act
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pump();
+
+      // Assert
+      expect(find.text('El email es requerido'), findsOneWidget);
+    });
+  });
+}
+```
+
+Reglas:
+- Usar `setUp()` para inicializar mocks, nunca en el scope global
+- `group()` para agrupar tests relacionados por método o caso de uso
+- Usar `@GenerateMocks` de mockito para generar mocks (correr `dart run build_runner build`)
+- Widget tests con `tester.pumpWidget()` y `tester.pump()` para ciclos de UI
+- No testear widgets de UI trivial (solo si tienen lógica condicional)
+- Cancelar timers y subscriptions en `tearDown()` si aplica
+
+---
+
+[COBERTURA ORIENTATIVA]
+
+- Lógica de dominio (servicios, casos de uso): 80%+
+- Repositorios: tests de integración
+- Controllers/endpoints: test de integración (happy + error path)
+- Utilidades con lógica: 90%+
+- UI/presentación: opcional salvo lógica compleja
+- Flutter widgets: widget tests solo para widgets con lógica (formularios, condicionales)

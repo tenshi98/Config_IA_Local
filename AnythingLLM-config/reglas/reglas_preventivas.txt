@@ -1,0 +1,48 @@
+[REGLAS PREVENTIVAS]
+
+PHP:
+- declare(strict_types=1) en todos los archivos
+- variables inicializadas antes de usar
+- evitar null pointer con null check o null safe operator
+- excepciones tipadas, no Exception genérica
+- prepared statements siempre para SQL
+
+JavaScript:
+- async/await correcto con try/catch
+- manejo de errores explícito (no catch vacío)
+- removeEventListener en cleanup
+- verificar response.ok después de fetch
+- evitar await dentro de for..loop (usar Promise.all)
+
+TypeScript:
+- strict: true en tsconfig.json
+- nunca usar any para silenciar errores — corregir el tipo real
+- type guards en lugar de type assertions cuando el tipo puede variar
+- tipar siempre el retorno de funciones públicas
+- non-null assertion ! solo cuando el null es imposible y documentado
+
+Python:
+- type hints en funciones públicas
+- except específico, nunca bare except:
+- context manager (with) para archivos y conexiones
+- default mutables en parámetros: usar None y crear dentro de la función
+- verificar que el entorno virtual está activo antes de instalar
+
+Flutter:
+- await en operaciones async que pueden fallar — envolver en try/catch
+- cancelar StreamSubscription en dispose()
+- no usar context después de await sin verificar mounted
+- evitar const en widgets con datos dinámicos
+- no poner listas o mapas como valores default en StatefulWidget (mutan)
+- usar const constructors en widgets estáticos para optimizar rebuild
+
+SQL:
+- índices en columnas filtradas frecuentemente
+- evitar SELECT *
+- LIMIT en queries de listado potencialmente grandes
+
+General:
+- edge cases
+- efectos secundarios
+- causa raíz vs síntoma
+- validar inputs antes de cualquier operación crítica

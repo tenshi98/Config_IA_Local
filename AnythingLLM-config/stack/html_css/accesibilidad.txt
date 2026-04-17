@@ -1,0 +1,64 @@
+[REGLAS DE ACCESIBILIDAD Y UI/UX (A11Y)]
+
+Estas reglas son obligatorias para cualquier tarea que implique generar interfaces de usuario, ya sea en web (HTML/CSS) o móvil (Flutter). 
+Garantizar la accesibilidad (cumplimiento nivel AA de WCAG 2.1) no es opcional, es parte de la correctitud del código entregado.
+
+---
+
+[WEB: HTML Y SEMÁNTICA]
+
+- **Etiquetas Semánticas**: Nunca usar `<div>` o `<span>` para botones, enlaces o títulos.
+  - Correcto: `<button>`, `<a>`, `<header>`, `<nav>`, `<main>`, `<article>`, `<section>`, `<footer>`.
+- **Estructura de Encabezados**: Respetar el orden jerárquico (`<h1>` a `<h6>`). Nunca saltar niveles (ej: pasar de h2 a h4 directamente). Solo un `<h1>` principal por página.
+- **Formularios**: Todo `<input>`, `<select>` y `<textarea>` debe tener un `<label>` asociado de forma explícita mediante el atributo `for="id-del-input"`.
+- **Imágenes**: Uso obligatorio del atributo `alt`.
+  - Si la imagen es informativa: `alt="descripción de la imagen"`.
+  - Si es puramente decorativa: `alt=""` (vacío, nunca omitir el atributo).
+- **Atributos ARIA (Accessible Rich Internet Applications)**:
+  - Úsese sólo cuando no exista un elemento HTML nativo que cumpla esa función.
+  - Usar `aria-expanded` para menús/acordeones.
+  - Usar `aria-hidden="true"` para ocultar elementos decorativos (íconos fuente) de los lectores de pantalla.
+  - Usar `aria-live` para regiones dinámicas que se actualizan sin recargar la página (notificaciones).
+
+[WEB: CSS Y NAVEGACIÓN]
+
+- **Navegación por Teclado (`:focus`)**:
+  - Todo elemento interactivo debe ser navegable con la tecla Tab (`tabindex="0"` solo si es un div custom, preferir nativos).
+  - NUNCA uses `outline: none;` sin proveer un estilo alternativo para `:focus` o `:focus-visible` que sea evidente.
+- **Texto Oculto para Lectores de Pantalla**:
+  - Para íconos que actúan como botones sin texto visible, usar una clase `sr-only` o `visually-hidden` en lugar de `display: none` (que lo oculta también al screen reader).
+- **Contraste de Color (WCAG AA)**:
+  - Texto normal: Relación de contraste mínima de 4.5:1 respecto al fondo.
+  - Texto grande (18pt o 14pt bold): Relación 3:1 mínima.
+
+---
+
+[MÓVIL: FLUTTER]
+
+- **Uso de Semantics**: Envolver widgets no estándar (o conjuntos de widgets) con el widget `Semantics` para describir lo que un lector de pantalla (TalkBack/VoiceOver) debe leer.
+  ```dart
+  Semantics(
+    button: true,
+    label: 'Cerrar ventana',
+    child: Icon(Icons.close),
+  )
+  ```
+- **Tamaño de Zonas Táctiles**: Todo botón o elemento interactivo debe tener un área "tappeable" mínima de 48x48 píxeles lógicos, según material UI (usar padding si el elemento interior es más pequeño).
+- **Contraste de Texto**: Utilizar estilos de tema que respeten nativamente el contraste. Al hardcodear colores, respetar el ratio 4.5:1.
+- **Merge Semantics**: Usar `MergeSemantics` cuando existen múltiples pequeños textos/widgets juntos que el lector de pantalla debería leer como una sola frase (por ejemplo, un Checkbox junto a su texto descriptor).
+
+---
+
+[UI EXPERIENCIA DE USUARIO (UX)]
+
+- **Retroalimentación (Feedback):** Si un script hace fetch de datos o altera el estado, la UI debe mostrar un estado visual de carga explícito (spinner, skeleton, o bloqueo de botón). Requisito CRÍTICO en las soluciones generadas.
+- **Prevención de Errores:** Validar a nivel de HTML (`required`, `type="email"`, `min`, `max`) para evitar envíos erróneos y proveer feedback antes que el frontend llame a la API.
+- **Modos Oscuro/Claro:** Al crear estilos base de CSS puro, proveer automáticamente un media query `@media (prefers-color-scheme: dark)` o sistema de variables `--bg-color` si el prompt pide un diseño completo.
+
+---
+
+[EVALUACIÓN DEL REVIEWER]
+1. ¿El código UI generado usa tags semánticos nativos (button, nav, etc) y no elementos neutros interactivos?
+2. ¿Existen labels vinculados correctamente a cada input en los forms?
+3. ¿Las áreas de foco tienen el `:focus-visible` apropiado o el widget tiene hit test mínimo en Flutter?
+Si la respuesta a cualquiera es NO -> Añadir advertencia (⚠️).

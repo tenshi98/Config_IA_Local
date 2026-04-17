@@ -1,0 +1,184 @@
+[JAVASCRIPT — REGLAS DE DESARROLLO]
+
+Versión: ES2023+ (ESNext)
+Entorno: Browser y/o Node.js
+
+---
+
+[VARIABLES Y TIPOS]
+
+- const por defecto — solo let cuando el valor va a reasignarse
+- Nunca var — tiene scope de función y hoisting problemático
+- Nombres descriptivos: userList no ul, isAuthenticated no auth
+- Desestructuración para extraer propiedades:
+  const { name, email } = user;
+  const [first, ...rest] = items;
+- Nullish coalescing: value ?? 'default' (no value || que colapsa falsys)
+- Optional chaining: user?.address?.city
+
+---
+
+[FUNCIONES]
+
+- Arrow functions para callbacks y funciones anónimas cortas
+- Funciones nombradas para lógica de negocio (mejor stack trace)
+- Funciones puras: mismo input → mismo output, sin efectos secundarios
+- Máximo 30 líneas por función — extraer si es más
+- Parámetros con destructuring y defaults:
+
+```javascript
+// Correcto
+function createUser({ name, email, role = 'user' } = {}) { ... }
+
+// Incorrecto
+function createUser(name, email, role) {
+    role = role || 'user'; // colapsa 0, false, ''
+}
+```
+
+---
+
+[ASYNC / AWAIT]
+
+- async/await OBLIGATORIO — no .then() salvo chaining puntual
+- NUNCA async sin await dentro (promesa no resuelta = bug silencioso)
+- try/catch en toda operación async
+- Promise.all() para múltiples operaciones paralelas independientes
+- Promise.allSettled() cuando se necesita resultado de todas aunque fallen
+- Evitar await dentro de bucles — usar Promise.all(items.map(...))
+
+```javascript
+// Correcto — paralelo
+const [users, orders] = await Promise.all([fetchUsers(), fetchOrders()]);
+
+// Incorrecto — secuencial innecesario
+const users = await fetchUsers();
+const orders = await fetchOrders();
+
+// Incorrecto — await en bucle (N peticiones secuenciales)
+for (const id of ids) {
+    const item = await fetchItem(id); // mal
+}
+```
+
+---
+
+[MANEJO DE ERRORES]
+
+- try/catch en toda función async expuesta
+- No dejar catch vacíos — al menos loggear
+- Error boundaries en frameworks (React/Vue)
+- Errores de red: siempre manejar el caso de fallo de fetch
+- Diferenciar errores del usuario vs errores del sistema
+
+```javascript
+// Correcto
+try {
+    const data = await fetchUser(id);
+    return data;
+} catch (error) {
+    console.error('[fetchUser] Error:', error.message);
+    throw new UserNotFoundError(id);
+}
+```
+
+---
+
+[MÓDULOS]
+
+- ES Modules (import/export) obligatorio — no require() en frontend
+- Named exports preferidos sobre default exports (mejor refactoring)
+- Barrel exports (index.js) para módulos con múltiples exports
+- Evitar circular imports — señal de diseño incorrecto
+
+```javascript
+// Preferido
+export function parseDate(str) { ... }
+export function formatDate(date) { ... }
+
+// Usar
+import { parseDate, formatDate } from './utils/date.js';
+```
+
+---
+
+[INMUTABILIDAD]
+
+- No mutar arrays ni objetos directamente — crear nuevos:
+  const newArr = [...arr, newItem];
+  const updated = { ...obj, name: 'nuevo' };
+- Especialmente en frameworks reactivos (React, Vue) — la mutación
+  directa no dispara re-renders
+- Object.freeze() para constantes de configuración
+
+---
+
+[DOM Y BROWSER]
+
+- Nunca innerHTML con datos del usuario (XSS)
+- Usar textContent para texto, createElement para estructura
+- Event delegation en lugar de listeners en cada elemento de lista
+- removeEventListener para prevenir memory leaks
+- Usar IntersectionObserver en lugar de scroll events cuando sea posible
+- requestAnimationFrame para animaciones — no setInterval
+
+---
+
+[RENDIMIENTO]
+
+- Minimizar re-renders en frameworks: memo, useMemo, useCallback (React)
+- Lazy loading de módulos: import('./module.js')
+- Debounce en inputs que disparan búsquedas o requests
+- Throttle en scroll handlers
+- Evitar operaciones costosas en el render path
+
+```javascript
+// Debounce
+const debouncedSearch = debounce((query) => searchAPI(query), 300);
+```
+
+---
+
+[NOMENCLATURA]
+
+- Variables y funciones: camelCase (getUserById, isLoggedIn)
+- Clases: PascalCase (UserService, ApiClient)
+- Constantes globales: UPPER_SNAKE_CASE (MAX_RETRIES, API_BASE_URL)
+- Archivos: kebab-case (user-service.js, api-client.js)
+- Booleanos: prefijo is/has/can (isActive, hasPermission, canEdit)
+- Event handlers: prefijo handle (handleClick, handleSubmit)
+
+---
+
+[CALIDAD DE CÓDIGO]
+
+- JSDoc en funciones públicas de módulos
+- No comentarios que explican "qué" — el código debe ser legible
+- Comentarios para "por qué" cuando la decisión no es obvia
+- console.log() prohibido en commits (usar sistema de logging)
+- Magic numbers con nombre: const MAX_LOGIN_ATTEMPTS = 5;
+
+---
+
+[FRAMEWORKS SOPORTADOS]
+
+REACT & NEXT.JS:
+- Hooks deben ir al principio del componente sin anidación
+- Especificar y aplicar estricta separación entre Server Components (obtención de datos segura) y Client Components (Next.js App Router)
+- Estado global: Evitar "Prop Drilling" infinito sugiriendo soluciones atómicas o ligeras como Zustand, o RTK (Redux Toolkit) para estado fuertemente persistente
+- Cuidado exhaustivo previniendo re-renders y fugas de efectos (useMemo, useCallback)
+
+VUE.JS & NUXT.JS:
+- Composition API (`<script setup>`) forzoso frente a Options API en proyectos de migración reciente o nuevos
+- Manejar reactividad con `ref` (primitivos) y `reactive` (estructuras)
+- Estado global: Pinia es obligatorio como reemplazo de Vuex. Usar stores modulares no monolíticos
+- Promover composables orientados funcionalmente (`useEntity(...)`) para no copar de estado la visualización
+
+ANGULAR:
+- Abrazar fuertemente RxJS y sus operadores para asincronía (Observables)
+- Controladores como clases usando Decorators `@Component`, `@Injectable`
+- Separar servicios fuertemente y delegar toda lógica que no impacte vista allí
+
+NODE.JS (EXPRESS / MICROSERVICIOS):
+- Implementación de Arquitectura de Capas estricta: Capa Endpoint (Express Routing) → Capa Controlador (Validación Entrada) → Capa Servicio (Lógica de Negocio)
+- Validaciones en capa de acceso frontal usando middlewares globales basados en esquemas como Zod o Joi

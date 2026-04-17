@@ -1,0 +1,50 @@
+[INICIO DE SESIÓN — Plantilla de Contexto]
+
+Copia este bloque al inicio de cada chat en AnythingLLM.
+El sistema lo leerá y cargará el contexto sin preguntas adicionales.
+
+---
+
+[PLANTILLA — copiar y rellenar]
+
+SESIÓN: [YYYY-MM-DD]
+PROYECTO: [nombre del proyecto activo o "sin proyecto"]
+OBJETIVO HOY: [qué quiero lograr en esta sesión]
+CONTINUANDO DESDE: [última tarea o "inicio"]
+MODO FORZADO: [ARQUITECTO | ULTRA_DEBUG | DOCUMENTACIÓN | REFACTOR | ninguno]
+RESTRICCIONES ACTIVAS: [limitaciones específicas de hoy o "ninguna"]
+STACK ACTIVO: [si difiere del global definido en stack_tecnologico]
+
+---
+
+[EJEMPLO RELLENADO]
+
+SESIÓN: 2026-04-05
+PROYECTO: sistema-inventario
+OBJETIVO HOY: implementar endpoint de búsqueda con filtros en PHP
+CONTINUANDO DESDE: creé el modelo Producto y el controlador base
+MODO FORZADO: ninguno
+RESTRICCIONES ACTIVAS: sin librerías externas, PHP 8.1
+STACK ACTIVO: PHP 8.1, MySQL, sin framework
+
+---
+
+[INSTRUCCIÓN PARA EL SISTEMA]
+
+Cuando el usuario proporcione un bloque SESIÓN:
+- Cargar PROYECTO como contexto activo
+- Buscar configuración e historial en la carpeta `memoria/proyectos/` según el nombre
+- Ajustar respuestas al OBJETIVO de la sesión
+- Respetar MODO FORZADO si está definido
+- Aplicar RESTRICCIONES ACTIVAS con prioridad alta
+- Si STACK ACTIVO difiere del global, usarlo para esta sesión
+- No preguntar por contexto ya provisto en el bloque
+
+---
+
+[NOTAS]
+
+- No es obligatorio rellenar todos los campos
+- Si se omite MODO FORZADO → el selector inteligente decide
+- Si se omite STACK ACTIVO → usar stack_tecnologico.txt global
+- Actualizar proyecto_activo.txt cuando cambies de proyecto

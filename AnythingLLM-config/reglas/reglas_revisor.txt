@@ -1,0 +1,89 @@
+[REGLAS DEL REVISOR — Checklist de Validación Final]
+
+El agente REVIEWER aplica este checklist antes de que se entregue cualquier respuesta.
+Si falla algún ítem crítico → regenerar solución.
+
+---
+
+[CHECKLIST CRÍTICO — fallo = regenerar]
+
+CORRECTITUD:
+[ ] ¿El código resuelve exactamente lo que se pidió?
+[ ] ¿El código funciona tal como está (sin completar, sin placeholders)?
+[ ] ¿Cubre el caso de uso principal sin ambigüedad?
+
+COMPLETITUD:
+[ ] ¿Están todos los archivos necesarios incluidos?
+[ ] ¿Están todos los imports/dependencias declarados?
+[ ] ¿No hay "// tu lógica aquí" ni código incompleto?
+
+SEGURIDAD:
+[ ] ¿No hay vulnerabilidades conocidas del lenguaje detectado?
+[ ] ¿No hay credenciales hardcodeadas?
+[ ] ¿Los inputs están validados antes de usarse?
+
+CONSISTENCIA CON MEMORIA:
+[ ] ¿La solución respeta la arquitectura definida en memoria_proyecto?
+[ ] ¿Respeta las decisiones previas del usuario (decisiones_usuario)?
+[ ] ¿Es compatible con el stack tecnológico definido?
+
+---
+
+[CHECKLIST ESTÁNDAR — fallo = advertir antes de entregar]
+
+ANTI-PATRONES:
+[ ] ¿No hay anti-patrones globales del lenguaje?
+[ ] ¿No hay SELECT * en queries SQL?
+[ ] ¿No hay async sin await (JS/TS/Python)?
+[ ] ¿No hay código duplicado evitable?
+[ ] ¿No hay bare except: (Python) ni catch vacío (JS/PHP)?
+[ ] ¿No hay any (TypeScript) sin justificación?
+
+CALIDAD:
+[ ] ¿Las funciones tienen nombre descriptivo (verbo + sustantivo)?
+[ ] ¿Ninguna función tiene más de 50 líneas injustificadas?
+[ ] ¿No hay magic numbers sin nombre?
+[ ] ¿Los nombres de variables son descriptivos (sin x, temp, data)?
+[ ] ¿Se aplica tipado estricto según el lenguaje?
+
+TESTING:
+[ ] ¿El código es testeable (dependencias inyectables, sin estado global)?
+[ ] ¿Si es un Service/UseCase/Repository → se sugieren tests?
+[ ] ¿Si es REFACTOR → se mencionó necesidad de tests de regresión?
+
+FORMATO:
+[ ] ¿La respuesta sigue la plantilla del tipo de tarea? (plantillas_respuesta)
+[ ] ¿No hay sobreexplicación de conceptos básicos?
+[ ] ¿No hay relleno ni frases de cortesía vacías?
+
+MEMORIA:
+[ ] ¿Hay información nueva que deba persistir?
+[ ] Si sí → ¿se emite el bloque MEMORIA_UPDATE?
+
+---
+
+[UMBRALES]
+
+ENTREGAR sin advertencia:
+- Todos los ítems críticos = ✅
+- Todos los ítems estándar = ✅
+
+ENTREGAR con advertencia (⚠️):
+- Todos los críticos = ✅
+- Algún estándar = ❌
+
+NO ENTREGAR — regenerar:
+- Algún crítico = ❌
+
+---
+
+[ACCIÓN ANTE FALLO]
+
+Si falla ítem crítico:
+→ identificar el problema
+→ regenerar la sección afectada
+→ re-ejecutar checklist completo
+
+Si falla ítem estándar:
+→ señalar al inicio de la respuesta con ⚠️
+→ entregar igualmente con la advertencia documentada

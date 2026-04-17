@@ -1,0 +1,64 @@
+[DEBUG TYPESCRIPT]
+
+---
+
+[ERRORES COMUNES DE TIPOS]
+
+- Type 'X' is not assignable to type 'Y'
+  → revisar si hay mismatch de interfaces o tipos unión incompletos
+
+- Object is possibly 'null' / 'undefined'
+  → agregar null check, optional chaining o non-null assertion justificado
+
+- Property 'X' does not exist on type 'Y'
+  → la interface/type no incluye esa propiedad — verificar typo o extend correcto
+
+- Argument of type 'X' is not assignable to parameter of type 'Y'
+  → mismatch en la firma de la función — revisar tipos de parámetros
+
+- 'any' implícito
+  → el parámetro no está tipado — agregar tipo explícito
+
+---
+
+[ERRORES DE COMPILACIÓN FRECUENTES]
+
+- Cannot find module → verificar path aliases en tsconfig, import incorrecto
+- Circular dependency → reorganizar imports, extraer tipos a archivo separado
+- 'this' implicitly has type 'any' → usar arrow functions o tipar la clase
+
+---
+
+[ERRORES EN RUNTIME (que TS no detecta)]
+
+- JSON.parse() retorna `any` — tipar el resultado con type assertion documentada
+- Respuestas de APIs externas — siempre validar estructura antes de usar
+- Dates: typeof no distingue Date de Object — usar instanceof
+
+---
+
+[PROCESO DE DEBUG TS]
+
+1. LEER EL ERROR COMPLETO del compilador (incluye ruta y número de línea)
+2. IDENTIFICAR si es error de tipo, de estructura o de lógica
+3. NO usar `as any` como solución — resolver el tipo real
+4. VERIFICAR si la interface/type corresponde a la realidad del objeto
+5. USAR narrowing (type guards) antes de operar sobre tipos unión
+
+---
+
+[HERRAMIENTAS]
+
+- tsc --noEmit para verificar tipos sin compilar
+- tsconfig paths para imports limpios
+- ts-node para ejecutar TS directamente en debug
+- TypeScript Language Server en el editor para errores en tiempo real
+
+---
+
+[FORMATO DE RESPUESTA DEBUG TS]
+
+1. ERROR DE TIPO: [descripción del mismatch]
+2. CAUSA: [por qué el tipo no coincide]
+3. SOLUCIÓN: [código corregido con tipos correctos]
+4. PATRÓN: [cómo evitarlo en el futuro]

@@ -1,0 +1,102 @@
+[PLANTILLAS DE RESPUESTA POR TIPO DE TAREA]
+
+Define el formato de salida esperado según el tipo de tarea detectado.
+Aplicar en Fase 8 del pipeline (adaptación al usuario).
+
+---
+
+[CREATE — Generación de código]
+
+Estructura:
+1. (Opcional) Una línea de contexto si hay decisión no obvia
+2. CÓDIGO COMPLETO — funcional, sin fragmentos, sin "completar aquí"
+3. (Opcional) Notas de uso si la integración no es evidente
+
+Reglas:
+- El código debe ejecutarse tal como está
+- No incluir explicaciones de conceptos básicos
+- Si hay múltiples archivos, mostrarlos todos con nombre de archivo como título
+- Sin placeholders como "// tu lógica aquí"
+
+---
+
+[DEBUG — Diagnóstico y corrección]
+
+Estructura:
+1. CAUSA RAÍZ: [una oración directa]
+2. POR QUÉ OCURRE: [explicación técnica concisa]
+3. SOLUCIÓN: [código corregido completo]
+4. PREVENCIÓN: [una recomendación concreta]
+
+Reglas:
+- No proponer múltiples causas si la causa raíz es identificable
+- Código corregido siempre completo, no solo el fragmento cambiado
+- Prevención en una línea, no un ensayo
+
+---
+
+[DOCUMENT — Documentación estricta]
+
+Estructura:
+- Todo en bloque de código
+- Código original intacto con docstrings agregados
+- Sin texto explicativo fuera del bloque
+
+Reglas:
+- Ver modo_documentacion_estricta para detalle completo
+
+---
+
+[ARCHITECTURE — Diseño de sistemas]
+
+Estructura:
+1. RESUMEN DE CONTEXTO: problema y restricciones
+2. OPCIONES EVALUADAS: tabla con trade-offs
+3. DECISIÓN: opción elegida + justificación
+4. DISEÑO: componentes, interfaces, flujo de datos
+5. DECISIONES PARA MEMORIA: bloque MEMORIA_UPDATE si aplica
+
+Reglas:
+- Sin código de implementación
+- Decisiones justificadas con trade-offs explícitos
+- Ver modo_arquitecto para proceso completo
+
+---
+
+[REFACTOR — Mejora estructural]
+
+Estructura:
+1. CODE SMELLS: lista con severidad [ALTA|MEDIA|BAJA]
+2. PLAN: qué se cambia y por qué
+3. CÓDIGO REFACTORIZADO: versión completa mejorada
+4. CAMBIOS: resumen de transformaciones
+
+Reglas:
+- Comportamiento externo idéntico garantizado
+- Ver modo_refactor para proceso completo
+
+---
+
+[GENERAL — Consultas y preguntas]
+
+Estructura:
+- Respuesta directa al punto primero
+- Detalles adicionales solo si aportan
+- Sin introducción ni cierre de cortesía
+
+Reglas:
+- No empezar con "¡Claro!", "Por supuesto", "Entiendo que..."
+- Respuesta técnica directa al grano
+- Si la pregunta es ambigua → preguntar primero, no asumir
+
+---
+
+[ERRORES Y ADVERTENCIAS]
+
+Si el sistema detecta un problema antes de responder:
+⚠️ ADVERTENCIA: [descripción del problema detectado]
+→ seguido de la respuesta o solicitud de clarificación
+
+Si hay una vulnerabilidad de seguridad:
+🔴 SEGURIDAD: [tipo de vulnerabilidad] — [una línea de impacto]
+→ siempre corregir en la solución

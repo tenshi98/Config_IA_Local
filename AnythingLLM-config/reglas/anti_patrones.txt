@@ -1,0 +1,114 @@
+[ANTI-PATRONES — Globales y por Lenguaje]
+
+---
+
+[GLOBALES]
+
+- Código duplicado sin abstracción (DRY violation)
+- Suposiciones implícitas sin validación de inputs
+- Mezclado de responsabilidades en una misma función (SRP violation)
+- Funciones de más de 50 líneas sin justificación
+- Nombres de variables genéricos: $data, $result, $temp, val, x, obj
+- Magic numbers sin nombre: if (status == 2) → usar constante
+- Comentarios que explican "qué" hace el código (redundante)
+- Código comentado sin explicación (usar git para historia)
+- Funciones con más de 4 parámetros sin estructura (usar objeto)
+- Condiciones negadas innecesariamente: if (!isNotActive) → if (isActive)
+
+---
+
+[PHP]
+
+- SELECT * en queries SQL
+- Variables no inicializadas antes de usar
+- Concatenación de SQL con variables de usuario (SQL injection)
+- echo directo de datos sin sanitizar (XSS)
+- Manejo de errores con @ (silenciar excepciones)
+- Uso de mysql_* (obsoleto)
+- Funciones de más de una responsabilidad
+- Sin declare(strict_types=1)
+- Usar Exception genérica en lugar de excepciones específicas
+- new en el constructor de la clase que lo usa (acoplamiento duro)
+
+---
+
+[JAVASCRIPT]
+
+- async sin await (promesa no resuelta)
+- Callbacks anidados (callback hell)
+- var en lugar de const/let
+- == en lugar de === (comparación laxa)
+- console.log olvidado en producción
+- Mutar directamente el DOM en frameworks reactivos
+- Event listeners sin removeEventListener (memory leak)
+- innerHTML con datos del usuario (XSS)
+- await dentro de for...loop (secuencial ineficiente — usar Promise.all)
+- fetch sin verificar response.ok
+
+---
+
+[TYPESCRIPT]
+
+- Usar any para silenciar errores de tipo (evade el sistema de tipos)
+- Double cast: as unknown as Tipo (elude completamente el type checker)
+- Non-null assertion ! sin certeza real de que no es null
+- Interfaces vacías (equivale a {}) — usar unknown o never
+- Enums numéricos sin valores explícitos (difícil de debuggear)
+- Omitir tipo de retorno en funciones públicas (contrato oculto)
+- Usar object como tipo (demasiado amplio, usar Record<string, unknown>)
+- Type assertion en lugar de type guard (error en runtime)
+- Mezclar interface y type sin criterío consistente en el proyecto
+
+---
+
+[PYTHON]
+
+- bare except: (captura todo incluido SystemExit)
+- pass en except sin loggear ni re-raise
+- Variables de tipo mutable como default de parámetro: def f(x=[]):
+- Comparar con None usando == en lugar de is/is not
+- Importaciones con *: from module import * (poluciona el namespace)
+- String formatting con % en lugar de f-strings o .format()
+- Código en el scope global fuera de if __name__ == "__main__":
+- Listas enormes en memoria cuando un generador es suficiente
+- Open de archivo sin context manager (with)
+- print() para debugging en producción (usar logging)
+
+---
+
+[SQL]
+
+- SELECT * (trae columnas innecesarias)
+- Queries dentro de loops (N+1)
+- Falta de índices en columnas filtradas frecuentemente
+- Subqueries correlacionadas cuando un JOIN es suficiente
+- Transacciones sin manejo de rollback
+- Sin LIMIT en queries de listado potencialmente grandes
+
+---
+
+[FLUTTER]
+
+- setState innecesario en widgets grandes
+- Lógica de negocio dentro de widgets
+- FutureBuilder con Future generado en build() (recrea en cada render)
+- dispose() sin cancelar subscriptions
+- Hardcodear strings de UI (sin soporte de localización)
+- Navigator sin verificar mounted antes de usar context
+
+---
+
+[HTML/CSS]
+
+- Estilos inline mezclados con hojas de estilo
+- IDs usados para estilos (especificidad alta)
+- !important como solución rutinaria
+- Tablas para layouts (no para datos tabulares)
+- Imágenes sin atributo alt
+
+---
+
+Acción ante anti-patrón detectado:
+→ señalar el anti-patrón
+→ explicar por qué es problemático
+→ corregir antes de entregar respuesta

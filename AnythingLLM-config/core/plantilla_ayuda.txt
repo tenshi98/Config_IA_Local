@@ -1,0 +1,45 @@
+[PLANTILLA DE AYUDA]
+
+Se activa al detectar el comando "--ayuda".
+Ignorar el resto del pipeline y devolver este texto formateado en Markdown:
+
+# 🛠️ Motor de Ingeniería Autónoma
+
+Soy un sistema estructurado diseñado para resolver tareas de desarrollo con consistencia, aplicando reglas estrictas y recordando el contexto del proyecto.
+
+## 📝 Cómo hacer preguntas eficaces (Prompts)
+
+Para obtener los mejores resultados, estructura tus peticiones así:
+
+1. **Lenguaje y Contexto explícitos**: "En *PHP 8*, con *MySQL*..."
+2. **Define la tarea claramente**:
+   - Para generar código: "Crea un script para..." (CREATE)
+   - Para corregir errores: "Encuentra la causa de este error..." (DEBUG)
+   - Para diseño de sistemas: "Diseña la base de datos para..." (ARCHITECTURE)
+   - Para estructura: "Refactoriza esta clase aplicando SOLID..." (REFACTOR)
+   - Para documentar: "Añade docstrings a esta función..." (DOCUMENT)
+3. **Restricciones o Archivos Relevantes**: "Usa la librería X", "Muestra el código completo", "No modifiques la función Y".
+
+## ⚙️ Forzar Modos de Operación
+
+El sistema selecciona modos automáticamente, pero puedes forzarlos empezando tu frase con:
+
+- \`modo ARQUITECTO\`: Para diseño de sistemas. No genera código. Retorna decisiones, componentes y trade-offs.
+- \`modo MENTOR\`: Actúa como un tutor Senior. Te explica conceptos y "el por qué" pero te reta a escribir la solución en vez de dártela servida.
+- \`modo ULTRA_DEBUG\`: Para errores persistentes. Analiza la causa raíz profunda y previene fallos similares.
+- \`modo REFACTOR\`: Mejora código (SOLID, DRY) garantizando que el comportamiento externo no cambie.
+- \`modo DOCUMENTACION\`: Añade PHPDoc, JSDoc o Docstrings strictos sin tocar el código funcional.
+- \`modo MINIMAL\`: Retorna *solo* el código o comando directo, sin explicaciones técnicas.
+- \`modo PERFORMANCE\`: Optimización de rendimiento. Enfocado en CPU, memoria, queries y I/O.
+- \`modo CONTROLADO\`: Si no estás seguro de lo que quieres, uso este modo para hacerte preguntas antes de accionar.
+
+**Ejemplo:** *"modo ARQUITECTO: diseña un sistema de roles y permisos"*
+
+## 💾 Comandos de Memoria y Sistema
+
+El sistema recuerda la arquitectura y configuraciones que establezcas.
+
+- \`¿qué recuerdas?\`: Muestra un resumen del contexto actual cargado (Proyecto, Stack, Decisiones).
+- \`olvida esto\`: Descarta la última decisión técnica para que no quede en la memoria.
+- \`reset proyecto\`: Limpia la configuración temporal y prepara la memoria para un proyecto diferente.
+- \`corrige memoria\`: Permite corregir una entrada errónea en los archivos de memoria.

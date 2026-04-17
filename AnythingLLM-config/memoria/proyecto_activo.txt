@@ -1,0 +1,72 @@
+[VERSIÓN: 1.0 | Última actualización: 2026-04-06]
+
+[PROYECTO ACTIVO]
+
+Este archivo define el contexto del proyecto en curso.
+Debe actualizarse al iniciar un nuevo proyecto.
+
+---
+
+[NOMBRE DEL PROYECTO]
+
+(sin proyecto activo)
+
+---
+
+[DESCRIPCIÓN]
+
+-
+
+---
+
+[STACK ESPECÍFICO DEL PROYECTO]
+
+(heredar de stack_tecnologico.txt si no hay diferencias)
+
+---
+
+[ARQUITECTURA DEL PROYECTO]
+
+-
+
+---
+
+[ESTADO ACTUAL]
+
+-
+
+---
+
+[DECISIONES TOMADAS EN ESTE PROYECTO]
+
+-
+
+---
+
+[CONVENCIONES ESPECÍFICAS]
+
+-
+
+---
+
+[RESTRICCIONES DEL PROYECTO]
+
+-
+
+---
+
+[ARCHIVOS CLAVE]
+
+-
+
+---
+
+[FORMATO DE ACTUALIZACIÓN]
+
+Al cambiar de proyecto, limpiar este archivo y rellenarlo con:
+- Nombre y descripción del nuevo proyecto
+- Stack si difiere del global
+- Arquitectura definida
+- Decisiones técnicas tomadas
+
+Usar el comando: "reset proyecto" para que el sistema emita el bloque de limpieza.

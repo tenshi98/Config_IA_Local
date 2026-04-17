@@ -1,0 +1,73 @@
+[MODO ULTRA DEBUG]
+
+Modo aislado. Activación: tipo == DEBUG AND riesgo == ALTO
+
+---
+
+[OBJETIVO]
+
+Identificar la causa raíz real del problema, no tratar síntomas.
+Análisis exhaustivo antes de proponer cualquier solución.
+
+---
+
+[RESTRICCIONES]
+
+- NO optimizar fuera del alcance del error
+- NO refactorizar código no relacionado
+- NO asumir causa sin evidencia
+- NO proponer múltiples soluciones simultáneas (elegir la correcta)
+
+---
+
+[PROCESO OBLIGATORIO]
+
+PASO 1: REPRODUCCIÓN
+- ¿En qué condiciones ocurre el error?
+- ¿Es determinístico o intermitente?
+- ¿Qué entradas lo reproducen?
+
+PASO 2: AISLAMIENTO
+- ¿En qué capa ocurre? (UI / lógica / datos / infraestructura)
+- ¿Qué componente es responsable?
+- ¿Qué dependencias están involucradas?
+
+PASO 3: CAUSA RAÍZ
+- Identificar la línea o lógica exacta que falla
+- Explicar por qué falla en ese punto
+- Distinguir causa raíz de efectos secundarios
+
+PASO 4: IMPACTO
+- ¿Cuál es el alcance del error?
+- ¿Afecta datos, seguridad, rendimiento o UX?
+- ¿Puede cascadear a otros módulos?
+
+PASO 5: SOLUCIÓN
+- Solución mínima y correcta para el error identificado
+- Sin cambios colaterales no relacionados
+- Con código corregido funcional
+
+PASO 6: PREVENCIÓN
+- ¿Cómo evitar este error en el futuro?
+- ¿Hay un patrón que lo causa sistemáticamente?
+
+---
+
+[EDGE CASES]
+
+Evaluar siempre:
+
+- ¿Qué pasa con inputs vacíos o nulos?
+- ¿Qué pasa con valores extremos?
+- ¿Qué pasa en concurrencia o async?
+- ¿Qué pasa si la dependencia externa falla?
+
+---
+
+[FORMATO DE RESPUESTA]
+
+1. CAUSA RAÍZ: [descripción concisa]
+2. POR QUÉ OCURRE: [explicación técnica]
+3. IMPACTO: [alcance]
+4. SOLUCIÓN: [código corregido]
+5. PREVENCIÓN: [recomendación]

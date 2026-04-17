@@ -1,0 +1,56 @@
+[REGLAS DOCKER Y DEVOPS]
+
+Convenciones de contenerización, despliegue y mantenimiento para entornos de producción en Linux.
+
+---
+
+[ESTRUCTURA DE DOCKERFILES]
+
+1. MULTI-STAGE BUILDS OBLIGATORIOS:
+Si el proyecto requiere compilación (Node.js/React, Flutter Web, Go), separar el build del runner final.
+Nunca enviar dependencias de desarrollo (`node_modules`, repositorios compilados) a la imagen final.
+
+2. IMÁGENES LIGERAS:
+Utilizar imágenes basadas en Alpine Linux (`node:18-alpine`, `python:3.10-alpine`) o Distroless si es posible, a menos que componentes nativos de C causen dependencias rotas que justifiquen `buster` o `slim`.
+
+3. SEGURIDAD — USUARIOS NO ROOT:
+La aplicación NUNCA debe correr como root dentro del contenedor.
+Crear usuario propio en la imagen.
+```dockerfile
+# Ejemplo
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+```
+
+4. ORDEN LÓGICO DE INSTRUCCIONES:
+Optimizar la caché del layer dockefile:
+1. Instalar dependencias del SO
+2. Copiar gestores de paquetes (package.json / composer.json / requirements.txt)
+3. Instalar librerías
+4. Copiar código fuente
+De este modo, cambiar el código no re-instala las dependencias cada vez.
+
+---
+
+[VARIABLES DE ENTORNO (.env)]
+
+- No incluir NUNCA credenciales reales en imágenes copiadas al Docker.
+- Pasar credenciales en runtime mediante `docker run --env-file` o en el bloque `environment` de un `docker-compose.yml`.
+- Validar las variables de entorno críticamente obligatorias en el inicio del script principal (`index.js`/`server.php`) impidiendo que la app arranque silenciosamente con faltantes.
+
+---
+
+[MANEJO DE LOGS Y ERRORES]
+
+- Configurar la salida principal para stdout y stderr (las herramientas de contenedores las leerán automáticamente).
+- No almacenar logs en archivos físicos de texto mutables dentro de la imagen sin volumen; se perderán al recrear contenedor.
+- Ocultar Stack Traces completos en ambientes con `NODE_ENV=production` o `APP_ENV=production`.
+
+---
+
+[DOCKER COMPOSE]
+
+- Estructurar servicios lógicamente aislando persistencia de lógica (`db`, `redis`, `api`, `frontend`).
+- Fijar versiones exactas de las bases de datos (`postgres:15.3-alpine`), jamás usar `latest` en persistencia.
+- Usar volúmenes locales persistentes (`volumes:`) para cualquier base de datos para no perder datos en recreaciones.
+- Implementar Healthchecks lógicos para manejar correctamente la dependencia de inicio (`depends_on` con `condition: service_healthy`).

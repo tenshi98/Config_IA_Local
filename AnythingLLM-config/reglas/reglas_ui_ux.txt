@@ -1,0 +1,62 @@
+[REGLAS DE UI Y UX]
+
+Convenciones transversales de diseño web y móvil enfocadas en Accesibilidad, Rendimiento Perceptual y Experiencia de Usuario.
+
+---
+
+[PRINCIPIOS FUNDAMENTALES]
+
+- Mobile First: el diseño celular no es una adaptación, es el modelo principal a escalar hacia Desktop. (Medios a escalar usando medias queries `min-width`).
+- Jerarquía Clara: un único y claro Call to Action (CTA) por ventana o bloque funcional.
+- Espacios en blanco (White Space): no compactar, el respiro visual permite enfocarse.
+
+---
+
+[GESTIÓN DE ESTADOS (ESTADOS DE COMPONENTES)]
+
+Todo componente interactivo o que requiera un llamado a la API debe contemplar:
+
+1. Estado Inicial (Empty State / Skeleton).
+2. Estado de Carga (Loading / Deshabilitado) → Deshabilitar botones para evitar múltiples clics de envío y mostrar un Spinner.
+3. Estado de Error (Feedback claro) → Mostrar qué falló y dar un botón de 'Reintentar', no dejar la pantalla en bucle.
+4. Estado de Éxito / Contenido (Lleno).
+
+---
+
+[RESPUESTA AL USUARIO Y PREVENCIÓN DE ERRORES]
+
+- Validaciones en Tiempo Real: En frontend o app móvil, no esperar al Submit para informar de formato incorrecto del email.
+- Mensajes humanos: "El correo introducido ya está en uso" en lugar de "Internal Exception: DUPLICATED_KEY email".
+- Acciones destructivas: Eliminación de cuentas o borrados masivos exigen confirmación obligada (ej. Modal preguntando 'Escribe confirmar o tu nombre de usuario para borrar').
+
+---
+
+[ACCESIBILIDAD Y RENDIMIENTO VISUAL (A11Y)]
+
+- Contraste: Ratio mínimo de 4.5:1 en texto.
+- Etiquetas (Arias): Iconos interactivos sin texto deben tener siempre `aria-label` descriptivos. Textos `alt` obligatorios y descriptivos en imágenes vitales.
+- Foco de teclado: El outline natural en CSS no se retira, salvo que se cree uno personalizado superior (`focus:ring`).
+- Pre-carga: Usar técnicas de Skeleton Loaders (vistas precargadas grises) en lugar de un único spinner central para interfaces complejas reduciendo la asimetría cognitiva.
+- Evitar Flash of Unstyled Content (FOUC).
+
+---
+
+[SISTEMAS DE DISEÑO / ESTILOS]
+
+- Coherencia: Utilizar tokens de diseño (variables CSS / constantes en Flutter u otro framwork) para Colores, Tipografías, Espaciados (Radio, Margen, Padding).
+- No usar valores mágicos (Magic Numbers): No hacer márgenes de `13px` si el estándar del sistema es de cuadrícula de 4 ó 8 (`12px` - `16px`).
+- Dark Mode / Light Mode: Basado siempre en paleta CSS semántica (no hardcodear blanco).
+
+---
+
+[INTERFACES DE AGENTES IA Y SKILLS (AI UI/UX)]
+
+Al diseñar o integrar interfaces para Skills de IA, asientes, o plugins LLM, es obligatorio priorizar la confianza, el control y la transparencia:
+
+- Transparencia (No "Cajas Negras"): No ocultar el proceso de la IA. Utilizar "thought logs" (registros de pensamiento), árboles de decisión visuales o mensajes de estado paso a paso para que el usuario entienda cómo se llegó a una conclusión.
+- Control del Usuario y Autonomía (Human-in-the-loop): Incorporar "botones de pánico" o rutas claras para cancelar, pausar o deshacer la acción de un agente autónomo. Para acciones irreversibles, requerir confirmación explícita (Intent Previews).
+- Feedback Proactivo: Utilizar indicadores dinámicos (como medidores de confianza de la IA) y cambiar las interfaces "Just-In-Time" mostrando componentes únicamente cuando el agente tiene data estructurada lista para mostrar.
+- Patrones de Diseño Recomendados:
+  - Split-Screen (Pantalla dividida): Chat a un lado y "Canvas" de trabajo o previsualización al otro.
+  - Co-piloto Contextual: Barras laterales (Sidebars) que asisten sin interrumpir el flujo visual de la aplicación principal.
+  - Salidas Estructuradas: Preferir tablas, widgets JSON interactivos o tarjetas en lugar de bloques masivos de texto plano generados por la IA.

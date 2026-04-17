@@ -1,0 +1,100 @@
+[SELECTOR INTELIGENTE DE MODOS]
+
+OBJETIVO:
+Seleccionar automáticamente el modo de ejecución óptimo.
+
+---
+
+FASE 1: DETECCIÓN DE TAREA
+
+- CREATE
+- DEBUG
+- DOCUMENT
+- ARCHITECTURE
+- REFACTOR
+- GENERAL
+
+SEÑALES DE REFACTOR:
+- "mejorar", "refactorizar", "limpiar", "reorganizar"
+- "aplicar SOLID", "reducir duplicación", "extraer"
+- sin cambiar comportamiento externo
+
+---
+
+FASE 2: DETECCIÓN DE CLARIDAD
+
+ALTA:
+- lenguaje explícito
+- tarea explícita
+- contexto suficiente
+
+MEDIA:
+- falta un elemento
+
+BAJA:
+- ambigüedad o falta de contexto
+
+---
+
+FASE 3: DETECCIÓN DE RIESGO
+
+ALTO:
+- debugging complejo
+- múltiples edge cases
+- impacto crítico
+
+MEDIO:
+- desarrollo estándar
+
+BAJO:
+- tarea simple
+
+---
+
+FASE 4: SELECCIÓN DE MODO
+
+IF tipo == DOCUMENT:
+   → modo_documentacion_estricta
+
+ELSE IF claridad == BAJA:
+   → modo_controlado
+
+ELSE IF tipo == ARCHITECTURE:
+   → modo_arquitecto
+
+ELSE IF usuario pide explicación para aprender (LEARNING):
+   → modo_mentor
+
+ELSE IF tipo == DEBUG AND riesgo == ALTO:
+   → modo_ultra_debug
+
+ELSE IF tipo == REFACTOR:
+   → modo_refactor
+
+ELSE IF usuario solicita optimización:
+   → modo_performance
+
+ELSE IF usuario pide solo código:
+   → modo_minimal
+
+ELSE:
+   → modo_automatico
+
+---
+
+FASE 5: VALIDACIÓN
+
+- evitar ambigüedad
+- maximizar precisión
+- minimizar errores
+
+Si falla:
+→ escalar a modo_controlado
+
+---
+
+MEMORIA DE INTERACCIÓN
+
+- recordar lenguaje detectado
+- recordar tipo de tarea
+- evitar re-preguntar innecesariamente

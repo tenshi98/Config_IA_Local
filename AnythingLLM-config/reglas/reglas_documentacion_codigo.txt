@@ -1,0 +1,166 @@
+[REGLAS DE DOCUMENTACIÓN DE CÓDIGO]
+
+Define cuándo y cómo documentar código en el desarrollo diario.
+Distinto de modo_documentacion_estricta (que documenta código existente).
+
+---
+
+[PRINCIPIO BASE]
+
+El código debe ser lo suficientemente descriptivo para entenderse sin comentarios.
+Los comentarios documentan el "por qué", no el "qué".
+
+```php
+// Mal — explica qué hace el código (redundante)
+$i = $i + 1; // incrementar i
+
+// Bien — explica por qué (no es obvio)
+$retries = $retries + 1; // reintento por fallo transitorio de red, máx 3
+```
+
+---
+
+[CUÁNDO COMENTAR]
+
+SIEMPRE comentar:
+- Decisiones contraintuitivas o no obvias
+- Workarounds temporales con TODO + motivo
+- Lógica de negocio compleja que no puede simplificarse
+- Advertencias de uso o restricciones de una función
+- Algoritmos no triviales (con referencia si existe)
+
+NUNCA comentar:
+- Lo que el código ya dice claramente
+- Código comentado (→ eliminarlo, usar git para historia)
+- Comentarios de tipo "inicio de sección" genéricos: // === Helper Functions ===
+
+---
+
+[DOCSTRINGS — POR LENGUAJE]
+
+PHP (PHPDoc):
+```php
+/**
+ * Encuentra un usuario por email, ignorando los eliminados lógicamente.
+ *
+ * @param string $email Email normalizado (sin espacios, lowercase)
+ * @param bool   $includeInactive Incluir usuarios inactivos en la búsqueda
+ * @return User|null null si no existe o fue eliminado
+ * @throws DatabaseException Si falla la conexión
+ */
+public function findByEmail(string $email, bool $includeInactive = false): ?User
+```
+
+Reglas PHPDoc:
+- Solo en métodos públicos y protegidos
+- Describir el "para qué", no el "cómo"
+- @param solo si el tipo no es suficientemente descriptivo
+- @throws siempre que la función pueda lanzar excepción
+- No repetir lo que ya dice la firma de tipos
+
+---
+
+JavaScript (JSDoc):
+```javascript
+/**
+ * Aplica rate limiting por IP. Rechaza si supera el límite en la ventana de tiempo.
+ * @param {string} ip - Dirección IP del cliente
+ * @param {number} [limit=100] - Máximo de requests permitidos por ventana
+ * @returns {Promise<boolean>} true si el request está permitido
+ */
+async function checkRateLimit(ip, limit = 100) {
+```
+
+Reglas JSDoc:
+- En funciones exportadas de módulos
+- En funciones con parámetros no obvios
+- @returns describir qué representa el valor, no su tipo
+
+---
+
+Python (docstrings):
+```python
+def calculate_compound_interest(
+    principal: float,
+    rate: float,
+    periods: int,
+) -> float:
+    """
+    Calcula interés compuesto estándar.
+
+    Usa la fórmula A = P(1 + r)^n donde r es la tasa por período.
+    No considera impuestos ni fees.
+
+    Args:
+        principal: Capital inicial en la moneda del proyecto
+        rate: Tasa de interés por período (0.05 = 5%)
+        periods: Número de períodos de capitalización
+
+    Returns:
+        Monto total al final de los períodos (capital + interés)
+
+    Raises:
+        ValueError: Si rate < 0 o periods < 1
+    """
+```
+
+Reglas Python docstrings:
+- Formato Google Style o NumPy (elegir uno y ser consistente)
+- Primera línea: descripción concisa en imperativo
+- Args/Returns/Raises siempre que aplique
+- Ejemplos (Examples:) en funciones de utilería reutilizable
+
+---
+
+[COMENTARIOS INLINE]
+
+Solo cuando la línea es realmente no obvia:
+
+```python
+# Dividir por 1000 porque la API retorna milisegundos
+timestamp = api_response['ts'] / 1000
+
+# bcrypt tiene costo computacional intencional — no optimizar
+password_hash = bcrypt.hashpw(password, bcrypt.gensalt(rounds=12))
+```
+
+---
+
+[TODOs Y FIXMEs]
+
+Formato estándar:
+```
+# TODO(nombre): descripción de qué falta + contexto
+# FIXME: descripción del problema conocido + workaround actual
+# HACK: solución temporal, explicar por qué y qué la reemplazaría
+# NOTE: información importante para quien lea este código
+```
+
+Regla: cada TODO debe tener un issue en el backlog o una fecha estimada.
+
+---
+
+[DOCUMENTACIÓN DE ARQUITECTURA]
+
+No en el código — en archivos separados:
+- Decisiones arquitectónicas → arquitectura/decisiones_arquitectura.txt
+- README del módulo si es complejo
+- Diagramas de flujo para procesos no obvios
+
+---
+
+[CUÁNDO EL SISTEMA AGREGA COMENTARIOS AL GENERAR CÓDIGO]
+
+- En código con lógica de negocio no obvia
+- En workarounds o limitaciones conocidas
+- En algoritmos complejos
+- En parámetros con valores mágicos que tienen razón de ser
+- Nunca en código CRUD simple o getters/setters
+
+---
+
+[MODO DOCUMENTACIÓN ESTRICTA]
+
+Para documentar código existente sin modificarlo:
+→ activar modo_documentacion_estricta (modo aislado)
+Estas reglas aplican al desarrollo normal.

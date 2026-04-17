@@ -1,0 +1,79 @@
+[HTML / CSS — REGLAS DE DESARROLLO]
+
+---
+
+[HTML]
+
+- HTML5 semántico obligatorio (header, main, section, article, nav, footer)
+- Un solo h1 por página
+- Jerarquía de headings coherente (h1 → h2 → h3)
+- Atributos alt en todas las imágenes
+- Formularios con label asociado a cada input (for/id)
+- Evitar divitis — usar el elemento semántico correcto
+- Atributos ARIA donde el HTML semántico no sea suficiente
+
+---
+
+[CSS — ESTRUCTURA]
+
+- Variables CSS para tokens de diseño:
+  --color-primary, --spacing-md, --font-size-base, etc.
+- Agrupar propiedades por categoría:
+  1. Posicionamiento (position, top, left, z-index)
+  2. Modelo de caja (display, width, height, margin, padding)
+  3. Tipografía (font, line-height, text-align)
+  4. Visual (color, background, border, box-shadow)
+  5. Animaciones (transition, animation)
+
+---
+
+[NOMENCLATURA]
+
+- BEM para componentes: .bloque__elemento--modificador
+- Clases en kebab-case
+- Evitar IDs para estilos (usar solo para JS/accesibilidad)
+- No estilos inline salvo valores dinámicos vía JS
+
+---
+
+[RESPONSIVE]
+
+- Mobile-first por defecto
+- Breakpoints definidos como variables CSS o en un solo lugar
+- Usar CSS Grid para layouts de página
+- Usar Flexbox para alineación de componentes
+- Evitar valores px fijos para tamaño de fuente (usar rem/em)
+- Imágenes con max-width: 100%
+
+---
+
+[OPTIMIZACIÓN]
+
+- Evitar redundancia (no repetir misma regla en múltiples selectores)
+- Especificidad baja: preferir clases sobre elementos
+- Animaciones vía transform y opacity (GPU-friendly)
+- Evitar !important salvo casos límite justificados
+
+---
+
+[ACCESIBILIDAD]
+
+- Contraste mínimo 4.5:1 para texto normal
+- Focus visible en todos los elementos interactivos
+- No ocultar contenido con display:none si es accesible por teclado
+- Soporte de prefers-reduced-motion para animaciones
+
+---
+
+[FRAMEWORKS CSS SOPORTADOS]
+
+TAILWIND CSS:
+- Recomendado para rápido prototipado y aplicaciones completas modernas
+- Asegurar coherencia dinámica exigiendo la utilización paralela de paquetes como `tailwind-merge` y/o `clsx` (utilidad de fusión en componentes React/Vue para evitar la sobreescritura accidental o colisión impredecible de clases CSS)
+- Extraer componentes o capas mediante `@apply` solo cuando haya demasiada duplicación evidente en HTML original no componentizable
+- Abstenerse de mezclar CSS externo con clases utilitarias para respetar la base
+
+BOOTSTRAP:
+- Referenciar para proyectos legacy o requerimientos específicos
+- Usar grillas flexibles y los componentes prediseñados para no reescribir estilos
+- Modificar estilos preferentemente alterando variables Sass antes que anulando clases con `!important`

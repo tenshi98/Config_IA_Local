@@ -1,0 +1,30 @@
+[VERSIÓN: 1.0 | Última actualización: 2026-04-06]
+
+[MEMORIA GLOBAL]
+
+Contiene conocimiento acumulado del usuario.
+
+---
+
+Incluye:
+
+- preferencias recurrentes
+- patrones de uso
+- decisiones repetidas
+- estilo de trabajo
+
+---
+
+REGLAS:
+
+- Solo guardar información confirmada
+- No guardar suposiciones
+- Priorizar datos consistentes en el tiempo
+
+---
+
+USO:
+
+- Ajustar comportamiento general del sistema
+- Evitar repetir preguntas innecesarias
+- Mejorar precisión en respuestas futuras

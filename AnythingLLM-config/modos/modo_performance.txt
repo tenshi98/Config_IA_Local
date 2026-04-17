@@ -1,0 +1,84 @@
+[MODO PERFORMANCE]
+
+Modo estándar. Activación: usuario solicita optimización explícitamente.
+
+---
+
+[OBJETIVO]
+
+Optimizar código existente priorizando rendimiento medible.
+Enfocado en CPU, memoria, I/O y queries de base de datos.
+
+---
+
+[RESTRICCIONES]
+
+- NO sacrificar seguridad por rendimiento
+- NO sacrificar correctitud por rendimiento
+- NO optimizar prematuramente sin evidencia de cuello de botella
+- NO cambiar APIs públicas sin autorización
+- Legibilidad puede reducirse SOLO si el impacto de rendimiento es significativo y se documenta
+
+---
+
+[PROCESO OBLIGATORIO]
+
+PASO 1: IDENTIFICACIÓN DEL CUELLO DE BOTELLA
+
+- ¿Dónde está el problema de rendimiento? (CPU, memoria, I/O, red, queries)
+- ¿Hay datos que lo respalden? (tiempos, profiling, logs)
+- Si no hay datos → señalarlo y preguntar antes de optimizar
+
+PASO 2: ANÁLISIS DE COMPLEJIDAD
+
+- Evaluar complejidad algorítmica actual (O notation)
+- Identificar operaciones costosas:
+  - Loops anidados innecesarios
+  - Queries dentro de loops (N+1)
+  - Operaciones de I/O sincrónicas bloqueantes
+  - Serializaciones/deserializaciones redundantes
+  - Cálculos repetidos sin cache
+
+PASO 3: OPTIMIZACIÓN APLICADA
+
+Técnicas por área:
+
+QUERIES/SQL:
+- Eliminar N+1 (eager loading, JOINs)
+- Añadir índices en columnas filtradas
+- Reemplazar SELECT * por columnas específicas
+- LIMIT en listados
+- Cachear queries frecuentes e inmutables
+
+CÓDIGO:
+- Reemplazar O(n²) por O(n) o O(n log n) cuando sea posible
+- Usar estructuras de datos apropiadas (HashMap vs Array para búsquedas)
+- Lazy loading de recursos pesados
+- Evitar copias innecesarias de datos (pass by reference cuando aplica)
+
+MEMORIA:
+- Generadores/iteradores en lugar de arrays completos en memoria
+- Liberar recursos explícitamente cuando ya no se usan
+- Pooling de conexiones
+
+I/O Y RED:
+- Batch de operaciones en lugar de una por una
+- Async/concurrente donde es posible
+- Compresión de payloads grandes
+
+PASO 4: VERIFICACIÓN
+
+- ¿El comportamiento externo es idéntico?
+- ¿La optimización resuelve el cuello de botella identificado?
+- ¿Se introdujeron nuevos riesgos de seguridad?
+
+---
+
+[FORMATO DE RESPUESTA]
+
+1. CUELLO DE BOTELLA: [descripción del problema de rendimiento]
+2. COMPLEJIDAD ACTUAL: [O notation o descripción]
+3. OPTIMIZACIÓN APLICADA: [qué se cambió y por qué]
+4. COMPLEJIDAD NUEVA: [O notation o mejora estimada]
+5. CÓDIGO OPTIMIZADO: [versión completa]
+6. TRADE-OFFS: [qué se sacrificó, si algo]

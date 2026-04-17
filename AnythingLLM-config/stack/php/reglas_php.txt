@@ -1,0 +1,191 @@
+[PHP — REGLAS DE DESARROLLO]
+
+Versión: PHP 8.x (8.1+)
+Estilo: tipado estricto, SOLID, código producción-ready
+
+---
+
+[CONFIGURACIÓN BASE]
+
+- declare(strict_types=1); al inicio de TODOS los archivos PHP
+- Namespaces obligatorios — nunca código en espacio global
+- PSR-4 para autoloading
+- PSR-12 para estilo de código
+
+---
+
+[TIPADO]
+
+- Tipar TODOS los parámetros de funciones
+- Tipar TODOS los valores de retorno (incluido void)
+- Usar tipos de retorno nullable solo cuando sea necesario: ?string
+- Usar union types cuando aplica: int|string
+- Usar tipos de intersección cuando el contexto lo requiere: A&B
+- readonly properties para valores inmutables (PHP 8.1+)
+- Enums en lugar de constantes numéricas o strings mágicos (PHP 8.1+)
+- Named arguments para mayor claridad en funciones con muchos parámetros
+
+```php
+// Correcto
+function getUser(int $id, bool $withRelations = false): ?User {
+    // ...
+}
+
+// Incorrecto
+function getUser($id, $with = false) {
+    // ...
+}
+```
+
+---
+
+[CLASES Y OOP]
+
+SOLID:
+- S: una clase, una responsabilidad
+- O: abierta a extensión, cerrada a modificación (interfaces, herencia)
+- L: subclases deben ser sustituibles por la clase base
+- I: interfaces pequeñas y específicas, no interfaces gordas
+- D: depender de abstracciones, no de implementaciones concretas
+
+CLASES:
+- Constructores simples — no hacer lógica compleja en __construct
+- Usar constructor property promotion (PHP 8.0+)
+- Interfaces para contratos entre módulos
+- Abstract classes solo si hay comportamiento compartido real
+- Final en clases que no deben extenderse
+
+```php
+// Constructor property promotion
+class UserService {
+    public function __construct(
+        private readonly UserRepository $repository,
+        private readonly MailService $mail
+    ) {}
+}
+```
+
+MÉTODOS:
+- Máximo 30 líneas por método — extraer si es más largo
+- Un método = una responsabilidad
+- Nombres de método en forma de verbo: getUserById(), createOrder()
+- No retornar null cuando se puede retornar un NullObject o lanzar excepción
+
+---
+
+[MANEJO DE ERRORES]
+
+- Usar excepciones tipadas, nunca solo Exception genérica
+- Crear jerarquía de excepciones del dominio: NotFoundException, ValidationException
+- try/catch específico — no capturar Exception si solo se espera una específica
+- Nunca usar @ para silenciar errores
+- Log de errores interno — nunca exponer al usuario
+- Usar finally para limpieza de recursos
+
+```php
+// Correcto
+try {
+    $user = $this->repository->findOrFail($id);
+} catch (NotFoundException $e) {
+    throw new UserNotFoundException("User {$id} not found", previous: $e);
+}
+
+// Incorrecto
+try { ... } catch (Exception $e) { }  // capture-all vacío
+```
+
+---
+
+[ARRAYS Y COLECCIONES]
+
+- Tipar arrays: array<int, User>, array<string, mixed>
+- Usar funciones nativas eficientes: array_map, array_filter, array_reduce
+- Nunca iterar para operaciones que tienen función nativa
+- Prefer spread operator para merge: [...$array1, ...$array2]
+- Para colecciones complejas → considerar clase Collection propia
+
+---
+
+[STRINGS]
+
+- Usar str_contains(), str_starts_with(), str_ends_with() (PHP 8.0+)
+- Evitar expresiones regulares para operaciones simples
+- Heredoc/nowdoc para strings multilínea
+- Nunca concatenar en queries SQL
+
+---
+
+[BASE DE DATOS]
+
+- PDO con prepared statements SIEMPRE
+- Nunca concatenar variables en queries
+- Transacciones para operaciones múltiples relacionadas
+- Separar la lógica de consulta en Repository
+- No hacer queries dentro de bucles (N+1)
+
+```php
+// Correcto
+$stmt = $pdo->prepare("SELECT id, name FROM users WHERE status = ?");
+$stmt->execute([$status]);
+
+// Incorrecto — SQL injection
+$query = "SELECT * FROM users WHERE status = '$status'";
+```
+
+---
+
+[RENDIMIENTO]
+
+- Lazy loading de dependencias cuando sea posible
+- isset() vs array_key_exists() — usar isset() para rendimiento salvo null
+- Evitar include/require dentro de bucles
+- Cachear resultados costosos (query cache, opcode cache)
+- Perfilar con Xdebug antes de optimizar
+
+---
+
+[NOMENCLATURA]
+
+- Clases: PascalCase (UserRepository, OrderService)
+- Métodos y variables: camelCase (getUserById, $userId)
+- Constantes: UPPER_SNAKE_CASE (MAX_RETRIES)
+- Archivos: PascalCase.php igual que la clase contenida
+- Interfaces: prefijo I o sufijo Interface (UserRepositoryInterface)
+- Abstract: prefijo Abstract (AbstractRepository)
+- Traits: sufijo Trait (TimestampTrait)
+
+---
+
+[SEGURIDAD — integrado]
+
+Ver reglas_seguridad.txt para detalle completo.
+Resumen:
+- Prepared statements siempre
+- htmlspecialchars() al renderizar datos de usuario
+- Tokens CSRF en formularios
+- display_errors = Off en producción
+- Nunca exponer stack traces
+
+---
+
+[FRAMEWORKS SOPORTADOS]
+
+LARAVEL:
+- Utilizar Eloquent ORM y migraciones como estándar; evitar consultas SQL nativas
+- Separar lógica en Controllers, FormRequests y Actions/Services para no saturar controladores
+- Uso de API Resources para la capa de transformación y serialización JSON pura
+- Implementar Jobs y Queues para todo procesamiento de fondo (emails, reportes)
+- Mantener las vistas Blade completamente declarativas (sin lógica pesada en la plantilla)
+
+SYMFONY:
+- Utilizar Doctrine ORM y el componente de formularios (Form Component)
+- Mantener Services y Dependency Injection de manera estricta y declarada
+- Recomendar explícitamente Event Subscribers en lugar de Event Listeners cuando el oyente requiera múltiples eventos
+- Integrar con Symfony Messenger activamente para consumo de colas y comandos asíncronos
+
+FAT-FREE FRAMEWORK (F3):
+- Priorizar la simplicidad absoluta y micro-arquitectura sin heredar dependencias masivas
+- Seguridad: Nunca usar `$_POST` o `$_GET` directamente; forzar el uso de `$f3->get('POST.var')` u otro verbo para auto-sanitización por parte del framework
+- Implementación impecable del `AUTOLOAD` (ej. `$f3->set('AUTOLOAD','app/controllers/');`) de clases para resolución limpia que no sature el `index.php`
+- Activar caché nativo para uso productivo incondicionalmente: `$f3->set('CACHE', true)` o motor similar (Memcached/Redis)
+- Mantener las rutas de closures breves delegando los comportamientos lógicos a métodos nativos orientados a clases
